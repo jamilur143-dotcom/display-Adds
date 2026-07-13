@@ -40,19 +40,8 @@ const resolveMedia = (url) => {
 };
 
 // ── Google Drive Asset Component with Auto-Fallback ──
-const GDriveAsset = ({ media, title, style, isMotion }) => {
-  const [status, setStatus] = useState(isMotion ? 'video' : 'image');
-
-  if (status === 'video') {
-    return (
-      <video 
-        src={media.directUrl} 
-        autoPlay loop muted playsInline 
-        style={style}
-        onError={() => setStatus('iframe')}
-      />
-    );
-  }
+const GDriveAsset = ({ media, title, style }) => {
+  const [status, setStatus] = useState('image');
 
   if (status === 'image') {
     return (
@@ -60,16 +49,16 @@ const GDriveAsset = ({ media, title, style, isMotion }) => {
         src={media.directUrl} 
         alt={title} 
         style={style}
-        onError={() => setStatus('iframe')}
+        onError={() => setStatus('thumbnail')}
       />
     );
   }
 
   return (
-    <iframe 
-      src={media.url} 
-      title={title} 
-      style={{ ...style, border: 'none' }} 
+    <img 
+      src={media.imageUrl} 
+      alt={title} 
+      style={style}
     />
   );
 };
