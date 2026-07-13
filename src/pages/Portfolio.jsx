@@ -1,5 +1,6 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { getStoredData, AD_SIZES } from '../data/mockData';
+import { syncPortfolioData } from '../firebase';
 import CampaignInfoCard from '../components/CampaignInfoCard';
 
 const resolveMedia = (url) => {
@@ -613,17 +614,14 @@ const Portfolio = () => {
   const [zoomedItem, setZoomedItem] = useState(null);
 
   useEffect(() => {
-    // Load initial data
-    setData(getStoredData());
-    
-    // Listen for changes from other tabs (Admin Dashboard)
-    const handleStorageChange = (e) => {
-      if (e.key === 'portfolioData_v3') {
+    const unsubscribe = syncPortfolioData((firestoreData) => {
+      if (firestoreData) {
+        setData(firestoreData);
+      } else {
         setData(getStoredData());
       }
-    };
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    });
+    return () => unsubscribe();
   }, []);
   
   if (!data) return null;

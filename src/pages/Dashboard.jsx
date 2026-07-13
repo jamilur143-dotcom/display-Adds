@@ -7,7 +7,8 @@ import {
   rectSortingStrategy, useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { getStoredData, updateStoredData, CATEGORIES, AD_SIZES } from '../data/mockData';
+import { getStoredData, CATEGORIES, AD_SIZES } from '../data/mockData';
+import { syncPortfolioData, savePortfolioData } from '../firebase';
 import CampaignInfoCard from '../components/CampaignInfoCard';
 
 const resolveMedia = (url) => {
@@ -532,7 +533,18 @@ const Dashboard = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
 
-  useEffect(() => { setData(getStoredData()); }, []);
+  useEffect(() => {
+    const unsubscribe = syncPortfolioData((firestoreData) => {
+      if (firestoreData) {
+        setData(firestoreData);
+      } else {
+        const local = getStoredData();
+        setData(local);
+        savePortfolioData(local);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -546,7 +558,7 @@ const Dashboard = () => {
       const from  = arr.findIndex(i => i.id === active.id);
       const to    = arr.findIndex(i => i.id === over.id);
       const next  = { ...prev, [activeTab]: arrayMove(arr, from, to) };
-      updateStoredData(next);
+      savePortfolioData(next);
       return next;
     });
   };
@@ -559,14 +571,14 @@ const Dashboard = () => {
       setData(prev => {
         const cats = prev.categories.includes(typed) ? prev.categories : [...prev.categories, typed];
         const next = { ...prev, categories: cats };
-        updateStoredData(next);
+        savePortfolioData(next);
         return next;
       });
     }
     setData(prev => {
       const arr  = prev[activeTab].map(i => i.id === id ? { ...i, category: newCat } : i);
       const next = { ...prev, [activeTab]: arr };
-      updateStoredData(next);
+      savePortfolioData(next);
       return next;
     });
   };
@@ -574,7 +586,7 @@ const Dashboard = () => {
   const handleDelete = (id) => {
     setData(prev => {
       const next = { ...prev, [activeTab]: prev[activeTab].filter(i => i.id !== id) };
-      updateStoredData(next);
+      savePortfolioData(next);
       return next;
     });
   };
@@ -584,7 +596,7 @@ const Dashboard = () => {
       const newIcon = { id: 'icon-' + Date.now(), url: iconUrl, name: iconName || 'Custom Tool' };
       const newLib = [...(prev.iconLibrary || []), newIcon];
       const next = { ...prev, iconLibrary: newLib };
-      updateStoredData(next);
+      savePortfolioData(next);
       return next;
     });
   };
@@ -599,7 +611,7 @@ const Dashboard = () => {
         }
       });
       const next = { ...prev, iconLibrary: newLib, categoryMeta: newMeta };
-      updateStoredData(next);
+      savePortfolioData(next);
       return next;
     });
   };
@@ -617,7 +629,7 @@ const Dashboard = () => {
           }
         }
       };
-      updateStoredData(next);
+      savePortfolioData(next);
       return next;
     });
   };
@@ -659,7 +671,7 @@ const Dashboard = () => {
       }
 
       const next = { ...prev, categories: cats, [activeTab]: newList };
-      updateStoredData(next);
+      savePortfolioData(next);
       return next;
     });
   };
