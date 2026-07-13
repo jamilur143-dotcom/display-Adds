@@ -25,7 +25,8 @@ const resolveMedia = (url) => {
       return { 
         type: 'gdrive', 
         url: `https://drive.google.com/file/d/${fileId}/preview`,
-        imageUrl: `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`
+        imageUrl: `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`,
+        directUrl: `https://drive.google.com/uc?export=download&id=${fileId}`
       };
     }
   }
@@ -379,7 +380,31 @@ const StaticBannerCard = ({ item, onZoom }) => {
             <img src={media.url} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           )}
           {item.url && media.type === 'gdrive' && (
-            <img src={media.imageUrl} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <>
+              <video 
+                src={media.directUrl} 
+                autoPlay loop muted playsInline 
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  if (e.target.nextSibling) e.target.nextSibling.style.display = 'block';
+                }}
+              />
+              <img 
+                src={media.directUrl} 
+                alt={item.title} 
+                style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'none' }}
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  if (e.target.nextSibling) e.target.nextSibling.style.display = 'block';
+                }}
+              />
+              <img 
+                src={media.imageUrl} 
+                alt={item.title} 
+                style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'none' }} 
+              />
+            </>
           )}
           {!item.url && (
             <>
@@ -440,7 +465,31 @@ const GifBannerCard = ({ item, onZoom }) => {
             <img src={media.url} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           )}
           {item.url && media.type === 'gdrive' && (
-            <iframe src={media.url} title={item.title} style={{ width: '100%', height: '100%', border: 'none' }} />
+            <>
+              <video 
+                src={media.directUrl} 
+                autoPlay loop muted playsInline 
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  if (e.target.nextSibling) e.target.nextSibling.style.display = 'block';
+                }}
+              />
+              <img 
+                src={media.directUrl} 
+                alt={item.title} 
+                style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'none' }}
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  if (e.target.nextSibling) e.target.nextSibling.style.display = 'block';
+                }}
+              />
+              <img 
+                src={media.imageUrl} 
+                alt={item.title} 
+                style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'none' }} 
+              />
+            </>
           )}
           {!item.url && <div className="gif-shimmer" />}
           {!item.url && <span className="banner-size-text" style={{ color, position: 'relative', zIndex: 1 }}>{item.adSize}</span>}

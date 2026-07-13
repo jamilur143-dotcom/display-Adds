@@ -33,7 +33,8 @@ const resolveMedia = (url) => {
       return { 
         type: 'gdrive', 
         url: `https://drive.google.com/file/d/${fileId}/preview`,
-        imageUrl: `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`
+        imageUrl: `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`,
+        directUrl: `https://drive.google.com/uc?export=download&id=${fileId}`
       };
     }
   }
@@ -264,9 +265,38 @@ const SortableItem = ({ id, item, allCategories, onCategoryChange, onEdit, onDel
           );
         }
         
+        if (media.type === 'gdrive') {
+          return (
+            <div className="dash-card-img" style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', background: 'rgba(255,255,255,0.03)' }}>
+              <video 
+                src={media.directUrl} 
+                autoPlay loop muted playsInline 
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  if (e.target.nextSibling) e.target.nextSibling.style.display = 'block';
+                }}
+              />
+              <img 
+                src={media.directUrl} 
+                style={{ display: 'none', width: '100%', height: '100%', objectFit: 'cover' }} 
+                alt=""
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  if (e.target.nextSibling) e.target.nextSibling.style.display = 'block';
+                }}
+              />
+              {/* Fallback to thumbnail API if direct download also fails */}
+              <div 
+                style={{ display: 'none', width: '100%', height: '100%', backgroundImage: `url(${media.imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }} 
+              />
+            </div>
+          );
+        }
+        
         // Default image type
         return (
-          <div className="dash-card-img" style={{ backgroundImage: `url(${media.type === 'gdrive' ? media.imageUrl : media.url})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+          <div className="dash-card-img" style={{ backgroundImage: `url(${media.url})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
         );
       })()}
       
