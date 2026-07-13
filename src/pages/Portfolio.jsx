@@ -189,19 +189,16 @@ const ZoomModal = ({ item, onClose }) => {
             }}
           />
         ) : media.type === 'gdrive' ? (
-          <img 
-            src={media.imageUrl} 
-            alt="Zoomed Asset" 
-            draggable="false"
-            onMouseDown={handleMouseDown}
-            onDoubleClick={() => { setScale(1.2); setPosition({ x: 0, y: 0 }); }}
+          <iframe 
+            src={media.url} 
+            title="Zoomed Asset" 
             style={{
-              maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain',
+              width: item.width || 800, height: item.height || 600,
+              maxWidth: '90vw', maxHeight: '90vh',
               transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
               transition: isDragging ? 'none' : 'transform 0.15s ease-out',
-              cursor: scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'zoom-in',
+              border: 'none', background: 'transparent',
               boxShadow: '0 20px 60px rgba(0,0,0,0.7)', borderRadius: '4px',
-              userSelect: 'none', WebkitUserDrag: 'none'
             }} 
           />
         ) : media.type === 'video' ? (
@@ -380,31 +377,7 @@ const StaticBannerCard = ({ item, onZoom }) => {
             <img src={media.url} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           )}
           {item.url && media.type === 'gdrive' && (
-            <>
-              <video 
-                src={media.directUrl} 
-                autoPlay loop muted playsInline 
-                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  if (e.target.nextSibling) e.target.nextSibling.style.display = 'block';
-                }}
-              />
-              <img 
-                src={media.directUrl} 
-                alt={item.title} 
-                style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'none' }}
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  if (e.target.nextSibling) e.target.nextSibling.style.display = 'block';
-                }}
-              />
-              <img 
-                src={media.imageUrl} 
-                alt={item.title} 
-                style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'none' }} 
-              />
-            </>
+            <iframe src={media.url} title={item.title} style={{ width: '100%', height: '100%', border: 'none' }} />
           )}
           {!item.url && (
             <>
@@ -465,31 +438,7 @@ const GifBannerCard = ({ item, onZoom }) => {
             <img src={media.url} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           )}
           {item.url && media.type === 'gdrive' && (
-            <>
-              <video 
-                src={media.directUrl} 
-                autoPlay loop muted playsInline 
-                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  if (e.target.nextSibling) e.target.nextSibling.style.display = 'block';
-                }}
-              />
-              <img 
-                src={media.directUrl} 
-                alt={item.title} 
-                style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'none' }}
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  if (e.target.nextSibling) e.target.nextSibling.style.display = 'block';
-                }}
-              />
-              <img 
-                src={media.imageUrl} 
-                alt={item.title} 
-                style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'none' }} 
-              />
-            </>
+            <iframe src={media.url} title={item.title} style={{ width: '100%', height: '100%', border: 'none' }} />
           )}
           {!item.url && <div className="gif-shimmer" />}
           {!item.url && <span className="banner-size-text" style={{ color, position: 'relative', zIndex: 1 }}>{item.adSize}</span>}
