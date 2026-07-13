@@ -16,6 +16,12 @@ const CampaignInfoCard = ({ meta, topic, iconLibrary = [] }) => {
         Photoshop
       </span>
     ),
+    illustrator: (
+      <span className="tool-tag" key="illustrator" title="Adobe Illustrator">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#330000" style={{ borderRadius: '3px' }}><rect width="24" height="24" fill="#330000"/><text x="12" y="16" fill="#ff9a00" fontSize="11" fontWeight="bold" fontFamily="sans-serif" textAnchor="middle">Ai</text></svg>
+        Illustrator
+      </span>
+    ),
     aftereffects: (
       <span className="tool-tag" key="aftereffects" title="Adobe After Effects">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="#1b122c" style={{ borderRadius: '3px' }}><rect width="24" height="24" fill="#1b122c"/><text x="12" y="16" fill="#d19aff" fontSize="11" fontWeight="bold" fontFamily="sans-serif" textAnchor="middle">Ae</text></svg>

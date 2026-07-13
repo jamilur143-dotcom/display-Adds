@@ -82,7 +82,7 @@ const CategoryMetaEditor = ({ activeCategory, activeTabLabel, categoryMeta = {},
     alert(`Campaign details saved for topic "${activeCategory}"!`);
   };
 
-  const availableTools = ['figma', 'photoshop', 'aftereffects', 'gwd'];
+  const availableTools = ['figma', 'photoshop', 'illustrator', 'aftereffects', 'gwd'];
 
   return (
     <div className="campaign-meta-editor" style={{
