@@ -56,7 +56,7 @@ const CategoryMetaEditor = ({ activeCategory, activeTabLabel, categoryMeta = {},
 
   const [projectName, setProjectName] = useState(categoryMeta.projectName || '');
   const [socialLinks, setSocialLinks] = useState(categoryMeta.socialLinks || {
-    email: '', phone: '', facebook: '', linkedin: '', website: ''
+    email: '', phone: '', facebook: '', linkedin: '', website: '', dribbble: '', behance: ''
   });
 
   useEffect(() => {
@@ -65,7 +65,7 @@ const CategoryMetaEditor = ({ activeCategory, activeTabLabel, categoryMeta = {},
     setYear(categoryMeta.year || '2026');
     setTools(categoryMeta.tools || []);
     setProjectName(categoryMeta.projectName || '');
-    setSocialLinks(categoryMeta.socialLinks || { email: '', phone: '', facebook: '', linkedin: '', website: '' });
+    setSocialLinks(categoryMeta.socialLinks || { email: '', phone: '', facebook: '', linkedin: '', website: '', dribbble: '', behance: '' });
   }, [categoryMeta]);
 
   const toggleTool = (tool) => {
@@ -93,7 +93,7 @@ const CategoryMetaEditor = ({ activeCategory, activeTabLabel, categoryMeta = {},
     alert(`Campaign details saved for topic "${activeCategory}"!`);
   };
 
-  const availableTools = ['figma', 'photoshop', 'illustrator', 'aftereffects', 'gwd', 'dribbble', 'behance'];
+  const availableTools = ['figma', 'photoshop', 'illustrator', 'aftereffects', 'gwd'];
 
   return (
     <div className="campaign-meta-editor" style={{
@@ -142,25 +142,35 @@ const CategoryMetaEditor = ({ activeCategory, activeTabLabel, categoryMeta = {},
         <div className="form-row" style={{ marginBottom: '0.75rem' }}>
           <div className="form-group" style={{ flex: 1 }}>
             <label>Gmail / Email</label>
-            <input type="email" value={socialLinks.email} onChange={e => handleSocialChange('email', e.target.value)} placeholder="e.g., hello@example.com" />
+            <input type="email" value={socialLinks.email || ''} onChange={e => handleSocialChange('email', e.target.value)} placeholder="e.g., hello@example.com" />
           </div>
           <div className="form-group" style={{ flex: 1 }}>
             <label>Phone Number</label>
-            <input type="text" value={socialLinks.phone} onChange={e => handleSocialChange('phone', e.target.value)} placeholder="e.g., +1 234 567 890" />
+            <input type="text" value={socialLinks.phone || ''} onChange={e => handleSocialChange('phone', e.target.value)} placeholder="e.g., +1 234 567 890" />
+          </div>
+        </div>
+        <div className="form-row" style={{ marginBottom: '0.75rem' }}>
+          <div className="form-group" style={{ flex: 1 }}>
+            <label>Facebook Link</label>
+            <input type="url" value={socialLinks.facebook || ''} onChange={e => handleSocialChange('facebook', e.target.value)} placeholder="https://facebook.com/..." />
+          </div>
+          <div className="form-group" style={{ flex: 1 }}>
+            <label>LinkedIn Link</label>
+            <input type="url" value={socialLinks.linkedin || ''} onChange={e => handleSocialChange('linkedin', e.target.value)} placeholder="https://linkedin.com/in/..." />
           </div>
         </div>
         <div className="form-row">
           <div className="form-group" style={{ flex: 1 }}>
-            <label>Facebook Link</label>
-            <input type="url" value={socialLinks.facebook} onChange={e => handleSocialChange('facebook', e.target.value)} placeholder="https://facebook.com/..." />
+            <label>Dribbble Link</label>
+            <input type="url" value={socialLinks.dribbble || ''} onChange={e => handleSocialChange('dribbble', e.target.value)} placeholder="https://dribbble.com/..." />
           </div>
           <div className="form-group" style={{ flex: 1 }}>
-            <label>LinkedIn Link</label>
-            <input type="url" value={socialLinks.linkedin} onChange={e => handleSocialChange('linkedin', e.target.value)} placeholder="https://linkedin.com/in/..." />
+            <label>Behance Link</label>
+            <input type="url" value={socialLinks.behance || ''} onChange={e => handleSocialChange('behance', e.target.value)} placeholder="https://behance.net/..." />
           </div>
           <div className="form-group" style={{ flex: 1 }}>
             <label>Website URL</label>
-            <input type="url" value={socialLinks.website} onChange={e => handleSocialChange('website', e.target.value)} placeholder="https://..." />
+            <input type="url" value={socialLinks.website || ''} onChange={e => handleSocialChange('website', e.target.value)} placeholder="https://..." />
           </div>
         </div>
       </div>

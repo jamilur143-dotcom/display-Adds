@@ -143,6 +143,18 @@ const CampaignInfoCard = ({ meta, topic, iconLibrary = [] }) => {
               Website
             </a>
           )}
+          {meta.socialLinks.dribbble && (
+            <a href={meta.socialLinks.dribbble.startsWith('http') ? meta.socialLinks.dribbble : `https://${meta.socialLinks.dribbble}`} className="social-link-btn" title="Dribbble" target="_blank" rel="noopener noreferrer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"></path></svg>
+              Dribbble
+            </a>
+          )}
+          {meta.socialLinks.behance && (
+            <a href={meta.socialLinks.behance.startsWith('http') ? meta.socialLinks.behance : `https://${meta.socialLinks.behance}`} className="social-link-btn" title="Behance" target="_blank" rel="noopener noreferrer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M22 7h-7v2h7V7zm1.72 10.85c.14-.54.2-1.23.2-2.07h-5.63c.02.73.23 1.3.62 1.7.4.4.92.6 1.55.6.53 0 .97-.13 1.3-.39.35-.26.6-.63.75-1.1h2.1c-.26 1-1.02 1.85-2.28 2.55-1.1.6-2.4.9-3.92.9-1.8 0-3.23-.53-4.28-1.6-1.06-1.07-1.58-2.53-1.58-4.4 0-1.93.53-3.46 1.6-4.6 1.07-1.13 2.54-1.7 4.4-1.7 1.75 0 3.12.52 4.12 1.57.98 1.05 1.48 2.56 1.48 4.54zm-3.15-4.13c-.04-.55-.24-1-.6-1.34-.35-.35-.8-.52-1.34-.52-.52 0-.96.17-1.33.52-.36.35-.58.8-.65 1.34h3.92zM8.9 14.5c1 0 1.7-.25 2.13-.77.43-.52.65-1.22.65-2.12 0-.8-.2-1.42-.6-1.86-.4-.44-1-.66-1.83-.66H4.2v5.4h4.7zm-.62-7.23c.8 0 1.4.2 1.83.6.43.4.65.98.65 1.74 0 .76-.23 1.34-.68 1.74-.46.4-1.07.6-1.85.6H4.2V7.27h4.08zM14 11.4c0-.98-.24-1.8-.73-2.45-.48-.65-1.2-1.12-2.12-1.4.74-.3 1.32-.73 1.7-1.3.4-.55.58-1.23.58-2 0-1.15-.44-2.02-1.3-2.6C11.23 1.05 10 .76 8.5.76H1v18.4h7.72c1.7 0 3.1-.38 4.1-1.14 1-.76 1.5-1.87 1.5-3.32 0-1.1-.34-2-.98-2.7-.63-.7-1.5-1.16-2.58-1.4.83-.16 1.5-.54 2-1.12.52-.6.76-1.3.76-2.08z"/></svg>
+              Behance
+            </a>
+          )}
         </div>
       )}
     </div>
