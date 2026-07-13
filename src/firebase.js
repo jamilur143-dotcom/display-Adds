@@ -14,6 +14,14 @@ import {
   orderBy
 } from "firebase/firestore";
 
+import { 
+  getStorage, 
+  ref, 
+  uploadBytes, 
+  getDownloadURL,
+  deleteObject
+} from "firebase/storage";
+
 const firebaseConfig = {
   apiKey: "AIzaSyCsFepvv7MuyCPWs4v-qTSIMnBCb3Xqbc0",
   authDomain: "display-adds-ee8f3.firebaseapp.com",
@@ -29,6 +37,17 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Cloud Firestore
 const db = getFirestore(app);
+
+// Initialize Firebase Storage
+const storage = getStorage(app);
+
+// Upload file to Firebase Storage
+export const uploadFileToStorage = async (file) => {
+  const uniqueName = `assets/${Date.now()}_${file.name}`;
+  const storageRef = ref(storage, uniqueName);
+  const snapshot = await uploadBytes(storageRef, file);
+  return await getDownloadURL(snapshot.ref);
+};
 
 // Sync portfolio data in real-time
 export const syncPortfolioData = (onUpdate) => {
@@ -60,5 +79,6 @@ export {
   deleteDoc, 
   onSnapshot,
   query,
-  orderBy
+  orderBy,
+  storage
 };

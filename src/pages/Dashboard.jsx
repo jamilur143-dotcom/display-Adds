@@ -8,7 +8,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { getStoredData, CATEGORIES, AD_SIZES } from '../data/mockData';
-import { syncPortfolioData, savePortfolioData } from '../firebase';
+import { syncPortfolioData, savePortfolioData, uploadFileToStorage } from '../firebase';
 import CampaignInfoCard from '../components/CampaignInfoCard';
 
 const resolveMedia = (url) => {
@@ -310,6 +310,7 @@ const UploadModal = ({ isOpen, onClose, onUpload, categories, defaultCategory, e
   const [category, setCategory] = useState('');
   const [newCat, setNewCat] = useState('');
   const [adSize, setAdSize] = useState('300 × 250');
+  const [isUploading, setIsUploading] = useState(false);
   
   const dropRef = useRef(null);
 
@@ -386,8 +387,8 @@ const UploadModal = ({ isOpen, onClose, onUpload, categories, defaultCategory, e
       alert("For HTML5 Ads (ZIP), it's highly recommended to extract the folder into your project's 'public' directory and just paste the link (e.g., /damo/damo.html) in the 'Ad URL' field below. Browsers cannot easily play ZIP files directly without a backend.");
       return;
     }
-    if (f.size > 1024 * 1024) {
-      alert("For this frontend mock, please upload files under 1MB to avoid localStorage limits.");
+    if (f.size > 50 * 1024 * 1024) {
+      alert("Please upload files under 50MB.");
       return;
     }
     setFile(f);
@@ -406,7 +407,7 @@ const UploadModal = ({ isOpen, onClose, onUpload, categories, defaultCategory, e
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     let hasError = false;
     
     if (!title.trim()) {
@@ -425,29 +426,37 @@ const UploadModal = ({ isOpen, onClose, onUpload, categories, defaultCategory, e
 
     if (hasError) return;
     
-    // Determine type and final URL
-    let finalUrl = preview;
-    let finalType = 'html5';
-    
-    if (adUrl) {
-      finalUrl = adUrl;
-      // Map activeTab to type
-      finalType = activeTab === 'staticAssets' ? 'static' : activeTab === 'motionGraphics' ? 'gif' : 'html5';
-    } else if (file) {
-      finalType = file.type.includes('video') || file.type.includes('gif') || file.name.toLowerCase().endsWith('.gif') ? 'gif' : file.type.includes('image') ? 'static' : 'html5';
-    } else if (editingItem) {
-      finalType = editingItem.type || editingItem.sizeType || 'html5';
-    }
+    setIsUploading(true);
+    try {
+      let finalUrl = preview;
+      let finalType = 'html5';
+      
+      if (adUrl) {
+        finalUrl = adUrl;
+        finalType = activeTab === 'staticAssets' ? 'static' : activeTab === 'motionGraphics' ? 'gif' : 'html5';
+      } else if (file) {
+        // Upload to Firebase Storage
+        finalUrl = await uploadFileToStorage(file);
+        finalType = file.type.includes('video') || file.type.includes('gif') || file.name.toLowerCase().endsWith('.gif') ? 'gif' : file.type.includes('image') ? 'static' : 'html5';
+      } else if (editingItem) {
+        finalType = editingItem.type || editingItem.sizeType || 'html5';
+      }
 
-    onUpload({
-      fileData: finalUrl,
-      title,
-      category: category === 'NEW_CATEGORY' ? newCat : category,
-      adSize,
-      weight: Math.round((file?.size || 0) / 1024) || 150, // Default 150KB for linked ads
-      type: finalType,
-    });
-    onClose();
+      onUpload({
+        fileData: finalUrl,
+        title,
+        category: category === 'NEW_CATEGORY' ? newCat : category,
+        adSize,
+        weight: Math.round((file?.size || 0) / 1024) || 150,
+        type: finalType,
+      });
+      onClose();
+    } catch (err) {
+      console.error(err);
+      alert("Upload failed: " + err.message);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -458,22 +467,24 @@ const UploadModal = ({ isOpen, onClose, onUpload, categories, defaultCategory, e
         <div 
           className="drop-zone"
           ref={dropRef}
-          onClick={() => document.getElementById('file-input').click()}
+          onClick={() => !isUploading && document.getElementById('file-input').click()}
           style={{
             borderColor: fileError ? '#f87171' : 'var(--border-color)',
-            boxShadow: fileError ? '0 0 0 1px #f87171' : 'none'
+            boxShadow: fileError ? '0 0 0 1px #f87171' : 'none',
+            cursor: isUploading ? 'not-allowed' : 'pointer',
+            opacity: isUploading ? 0.7 : 1
           }}
         >
           {preview ? (
-            preview.startsWith('data:video') ? (
+            preview.startsWith('data:video') || file?.type.startsWith('video') ? (
               <video src={preview} className="drop-preview" autoPlay loop muted playsInline style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
             ) : (
               <img src={preview} alt="preview" className="drop-preview" />
             )
           ) : (
-            <span>Drag & Drop file here or Click to browse (Max 1MB)</span>
+            <span>Drag & Drop file here or Click to browse (Max 50MB)</span>
           )}
-          <input type="file" id="file-input" hidden onChange={handleFileChange} accept="image/*,image/gif,video/mp4,.gif,.zip" />
+          <input type="file" id="file-input" hidden onChange={handleFileChange} accept="image/*,image/gif,video/mp4,.gif,.zip" disabled={isUploading} />
         </div>
 
         <div className="form-group" style={{ marginBottom: '1rem', marginTop: '1rem' }}>
@@ -486,6 +497,7 @@ const UploadModal = ({ isOpen, onClose, onUpload, categories, defaultCategory, e
             value={adUrl} 
             onChange={e => { setAdUrl(e.target.value); setFileError(false); }} 
             placeholder="Paste link to Google Drive, YouTube, or web asset..." 
+            disabled={isUploading}
             style={{ 
               borderColor: fileError ? '#f87171' : 'transparent',
               boxShadow: fileError ? '0 0 0 1px #f87171' : 'none'
@@ -501,6 +513,7 @@ const UploadModal = ({ isOpen, onClose, onUpload, categories, defaultCategory, e
             value={title} 
             onChange={e => { setTitle(e.target.value); setTitleError(false); }} 
             placeholder="e.g., Summer Sale Banner" 
+            disabled={isUploading}
             style={{ 
               borderColor: titleError ? '#f87171' : 'transparent',
               boxShadow: titleError ? '0 0 0 1px #f87171' : 'none'
@@ -512,26 +525,28 @@ const UploadModal = ({ isOpen, onClose, onUpload, categories, defaultCategory, e
         <div className="form-row">
           <div className="form-group">
             <label>Category</label>
-            <select value={category} onChange={e => setCategory(e.target.value)}>
+            <select value={category} onChange={e => setCategory(e.target.value)} disabled={isUploading}>
               {categories.filter(c => c !== 'All').map(c => <option key={c} value={c}>{c}</option>)}
               <option value="NEW_CATEGORY">+ Create New</option>
             </select>
             {category === 'NEW_CATEGORY' && (
-              <input type="text" placeholder="Type new category..." value={newCat} onChange={e => setNewCat(e.target.value)} style={{ marginTop: '0.5rem' }} />
+              <input type="text" placeholder="Type new category..." value={newCat} onChange={e => setNewCat(e.target.value)} style={{ marginTop: '0.5rem' }} disabled={isUploading} />
             )}
           </div>
           
           <div className="form-group">
             <label>Ad Size</label>
-            <select value={adSize} onChange={e => setAdSize(e.target.value)}>
+            <select value={adSize} onChange={e => setAdSize(e.target.value)} disabled={isUploading}>
               {AD_SIZES.map(sz => <option key={sz.id} value={sz.label}>{sz.label}</option>)}
             </select>
           </div>
         </div>
 
         <div className="modal-actions">
-          <button className="btn-secondary" onClick={onClose}>Cancel</button>
-          <button className="btn-primary" onClick={handleSubmit}>{editingItem ? 'Save Changes' : 'Upload Asset'}</button>
+          <button className="btn-secondary" onClick={onClose} disabled={isUploading}>Cancel</button>
+          <button className="btn-primary" onClick={handleSubmit} disabled={isUploading}>
+            {isUploading ? 'Uploading...' : editingItem ? 'Save Changes' : 'Upload Asset'}
+          </button>
         </div>
       </div>
     </div>
