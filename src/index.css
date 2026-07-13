@@ -734,3 +734,25 @@ body::after {
   border-color: rgba(0, 122, 255, 0.5) !important;
   box-shadow: 0 8px 32px var(--accent-glow);
 }
+
+/* Social Link Buttons */
+.social-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.social-link-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+}
+

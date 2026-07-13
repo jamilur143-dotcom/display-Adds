@@ -54,15 +54,26 @@ const CategoryMetaEditor = ({ activeCategory, activeTabLabel, categoryMeta = {},
   const [year, setYear] = useState('2026');
   const [tools, setTools] = useState([]);
 
+  const [projectName, setProjectName] = useState(categoryMeta.projectName || '');
+  const [socialLinks, setSocialLinks] = useState(categoryMeta.socialLinks || {
+    email: '', phone: '', facebook: '', linkedin: '', website: ''
+  });
+
   useEffect(() => {
     setDescription(categoryMeta.description || '');
     setClient(categoryMeta.client || '');
     setYear(categoryMeta.year || '2026');
     setTools(categoryMeta.tools || []);
+    setProjectName(categoryMeta.projectName || '');
+    setSocialLinks(categoryMeta.socialLinks || { email: '', phone: '', facebook: '', linkedin: '', website: '' });
   }, [categoryMeta]);
 
   const toggleTool = (tool) => {
     setTools(prev => prev.includes(tool) ? prev.filter(t => t !== tool) : [...prev, tool]);
+  };
+
+  const handleSocialChange = (field, value) => {
+    setSocialLinks(prev => ({ ...prev, [field]: value }));
   };
 
   const handleIconDrop = (e) => {
@@ -78,7 +89,7 @@ const CategoryMetaEditor = ({ activeCategory, activeTabLabel, categoryMeta = {},
   };
 
   const handleSave = () => {
-    onSave(activeCategory, { description, client, year, tools });
+    onSave(activeCategory, { description, client, year, tools, projectName, socialLinks });
     alert(`Campaign details saved for topic "${activeCategory}"!`);
   };
 
@@ -96,6 +107,21 @@ const CategoryMetaEditor = ({ activeCategory, activeTabLabel, categoryMeta = {},
         </h3>
       </div>
       
+      <div className="form-row" style={{ marginBottom: '1rem' }}>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label>Project Name (Overrides Campaign Name)</label>
+          <input type="text" value={projectName} onChange={e => setProjectName(e.target.value)} placeholder={`e.g., ${activeCategory} V2`} />
+        </div>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label>Client Name</label>
+          <input type="text" value={client} onChange={e => setClient(e.target.value)} placeholder="e.g., Timmerman Industries" />
+        </div>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label>Campaign Year</label>
+          <input type="text" value={year} onChange={e => setYear(e.target.value)} placeholder="e.g., 2026" />
+        </div>
+      </div>
+
       <div className="form-group" style={{ marginBottom: '1rem' }}>
         <label>Campaign Description</label>
         <textarea 
@@ -111,14 +137,31 @@ const CategoryMetaEditor = ({ activeCategory, activeTabLabel, categoryMeta = {},
         />
       </div>
 
-      <div className="form-row" style={{ marginBottom: '1rem' }}>
-        <div className="form-group">
-          <label>Client Name</label>
-          <input type="text" value={client} onChange={e => setClient(e.target.value)} placeholder="e.g., Timmerman Industries" />
+      <div className="form-group" style={{ marginBottom: '1.25rem', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+        <label style={{ display: 'block', marginBottom: '1rem', color: 'var(--accent-color)', fontWeight: '600' }}>Contact & Social Links</label>
+        <div className="form-row" style={{ marginBottom: '0.75rem' }}>
+          <div className="form-group" style={{ flex: 1 }}>
+            <label>Gmail / Email</label>
+            <input type="email" value={socialLinks.email} onChange={e => handleSocialChange('email', e.target.value)} placeholder="e.g., hello@example.com" />
+          </div>
+          <div className="form-group" style={{ flex: 1 }}>
+            <label>Phone Number</label>
+            <input type="text" value={socialLinks.phone} onChange={e => handleSocialChange('phone', e.target.value)} placeholder="e.g., +1 234 567 890" />
+          </div>
         </div>
-        <div className="form-group">
-          <label>Campaign Year</label>
-          <input type="text" value={year} onChange={e => setYear(e.target.value)} placeholder="e.g., 2026" />
+        <div className="form-row">
+          <div className="form-group" style={{ flex: 1 }}>
+            <label>Facebook Link</label>
+            <input type="url" value={socialLinks.facebook} onChange={e => handleSocialChange('facebook', e.target.value)} placeholder="https://facebook.com/..." />
+          </div>
+          <div className="form-group" style={{ flex: 1 }}>
+            <label>LinkedIn Link</label>
+            <input type="url" value={socialLinks.linkedin} onChange={e => handleSocialChange('linkedin', e.target.value)} placeholder="https://linkedin.com/in/..." />
+          </div>
+          <div className="form-group" style={{ flex: 1 }}>
+            <label>Website URL</label>
+            <input type="url" value={socialLinks.website} onChange={e => handleSocialChange('website', e.target.value)} placeholder="https://..." />
+          </div>
         </div>
       </div>
 

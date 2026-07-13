@@ -68,7 +68,7 @@ const CampaignInfoCard = ({ meta, topic, iconLibrary = [] }) => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
         <div style={{ flex: 1, paddingRight: '1rem' }}>
           <span style={{ display: 'block', fontSize: '0.65rem', color: 'var(--accent-color)', fontWeight: '700', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '0.2rem' }}>Campaign</span>
-          <h3 style={{ fontSize: '1.2rem', fontWeight: '800', margin: 0, color: '#fff' }}>{topic}</h3>
+          <h3 style={{ fontSize: '1.2rem', fontWeight: '800', margin: 0, color: '#fff' }}>{meta.projectName || topic}</h3>
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', maxWidth: '240px', justifyContent: 'flex-end' }}>
           {renderedTools}
@@ -94,6 +94,42 @@ const CampaignInfoCard = ({ meta, topic, iconLibrary = [] }) => {
               <span style={{ display: 'block', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.2rem', color: '#fff' }}>Year</span>
               <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#fff' }}>{meta.year}</span>
             </div>
+          )}
+        </div>
+      )}
+
+      {/* SOCIAL LINKS SECTION */}
+      {meta.socialLinks && Object.values(meta.socialLinks).some(val => !!val) && (
+        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem', flexWrap: 'wrap', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '1rem' }}>
+          {meta.socialLinks.email && (
+            <a href={`mailto:${meta.socialLinks.email}`} className="social-link-btn" title="Email" target="_blank" rel="noopener noreferrer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              Email
+            </a>
+          )}
+          {meta.socialLinks.phone && (
+            <a href={`tel:${meta.socialLinks.phone}`} className="social-link-btn" title="Phone" target="_blank" rel="noopener noreferrer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              Phone
+            </a>
+          )}
+          {meta.socialLinks.facebook && (
+            <a href={meta.socialLinks.facebook.startsWith('http') ? meta.socialLinks.facebook : `https://${meta.socialLinks.facebook}`} className="social-link-btn" title="Facebook" target="_blank" rel="noopener noreferrer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+              Facebook
+            </a>
+          )}
+          {meta.socialLinks.linkedin && (
+            <a href={meta.socialLinks.linkedin.startsWith('http') ? meta.socialLinks.linkedin : `https://${meta.socialLinks.linkedin}`} className="social-link-btn" title="LinkedIn" target="_blank" rel="noopener noreferrer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+              LinkedIn
+            </a>
+          )}
+          {meta.socialLinks.website && (
+            <a href={meta.socialLinks.website.startsWith('http') ? meta.socialLinks.website : `https://${meta.socialLinks.website}`} className="social-link-btn" title="Website" target="_blank" rel="noopener noreferrer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+              Website
+            </a>
           )}
         </div>
       )}
