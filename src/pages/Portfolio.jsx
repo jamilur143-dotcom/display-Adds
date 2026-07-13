@@ -440,7 +440,7 @@ const GifBannerCard = ({ item, onZoom }) => {
             <img src={media.url} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           )}
           {item.url && media.type === 'gdrive' && (
-            <img src={media.imageUrl} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <iframe src={media.url} title={item.title} style={{ width: '100%', height: '100%', border: 'none' }} />
           )}
           {!item.url && <div className="gif-shimmer" />}
           {!item.url && <span className="banner-size-text" style={{ color, position: 'relative', zIndex: 1 }}>{item.adSize}</span>}
