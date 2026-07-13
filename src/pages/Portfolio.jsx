@@ -38,6 +38,51 @@ const resolveMedia = (url) => {
   return { type: 'image', url };
 };
 
+// ── Google Drive Asset Component with Auto-Fallback ──
+const GDriveAsset = ({ media, title, style }) => {
+  const [status, setStatus] = useState('video'); // 'video' | 'image' | 'thumbnail'
+
+  if (status === 'video') {
+    return (
+      <video 
+        src={media.directUrl} 
+        autoPlay loop muted playsInline 
+        style={style}
+        onError={() => setStatus('image')}
+      />
+    );
+  }
+
+  if (status === 'image') {
+    return (
+      <img 
+        src={media.directUrl} 
+        alt={title} 
+        style={style}
+        onError={() => setStatus('thumbnail')}
+      />
+    );
+  }
+
+  return (
+    <img 
+      src={media.imageUrl} 
+      alt={title} 
+      style={style}
+      onError={(e) => {
+        // Ultimate fallback: if everything fails, show the preview player iframe
+        e.target.style.display = 'none';
+        const iframe = document.createElement('iframe');
+        iframe.src = media.url;
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        iframe.style.border = 'none';
+        e.target.parentNode.appendChild(iframe);
+      }}
+    />
+  );
+};
+
 // ── Zoom Modal ─────────────────────────────────────────────────────────────
 const ZoomModal = ({ item, onClose }) => {
   const [scale, setScale] = useState(1.2);
@@ -189,17 +234,18 @@ const ZoomModal = ({ item, onClose }) => {
             }}
           />
         ) : media.type === 'gdrive' ? (
-          <iframe 
-            src={media.url} 
-            title="Zoomed Asset" 
+          <GDriveAsset 
+            media={media} 
+            title="Zoomed Asset"
+            onMouseDown={handleMouseDown}
             style={{
               width: item.width || 800, height: item.height || 600,
               maxWidth: '90vw', maxHeight: '90vh',
               transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
               transition: isDragging ? 'none' : 'transform 0.15s ease-out',
-              border: 'none', background: 'transparent',
               boxShadow: '0 20px 60px rgba(0,0,0,0.7)', borderRadius: '4px',
-            }} 
+              cursor: scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'zoom-in',
+            }}
           />
         ) : media.type === 'video' ? (
           <video 
@@ -377,7 +423,7 @@ const StaticBannerCard = ({ item, onZoom }) => {
             <img src={media.url} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           )}
           {item.url && media.type === 'gdrive' && (
-            <iframe src={media.url} title={item.title} style={{ width: '100%', height: '100%', border: 'none' }} />
+            <GDriveAsset media={media} title={item.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           )}
           {!item.url && (
             <>
@@ -438,7 +484,7 @@ const GifBannerCard = ({ item, onZoom }) => {
             <img src={media.url} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           )}
           {item.url && media.type === 'gdrive' && (
-            <iframe src={media.url} title={item.title} style={{ width: '100%', height: '100%', border: 'none' }} />
+            <GDriveAsset media={media} title={item.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           )}
           {!item.url && <div className="gif-shimmer" />}
           {!item.url && <span className="banner-size-text" style={{ color, position: 'relative', zIndex: 1 }}>{item.adSize}</span>}
