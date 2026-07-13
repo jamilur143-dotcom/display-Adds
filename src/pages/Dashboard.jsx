@@ -700,15 +700,11 @@ const Dashboard = () => {
 
   const handleSaveMeta = (cat, metaObj) => {
     setData(prev => {
-      const currentCatMeta = prev.categoryMeta[cat] || {};
       const next = {
         ...prev,
         categoryMeta: {
           ...prev.categoryMeta,
-          [cat]: {
-            ...currentCatMeta,
-            [activeTab]: metaObj
-          }
+          [cat]: metaObj
         }
       };
       savePortfolioData(next);
@@ -819,7 +815,13 @@ const Dashboard = () => {
         <CategoryMetaEditor 
           activeCategory={activeCategory} 
           activeTabLabel={TAB_LABELS[activeTab]}
-          categoryMeta={data.categoryMeta?.[activeCategory]?.[activeTab] || {}} 
+          categoryMeta={
+            data.categoryMeta?.[activeCategory]
+              ? (data.categoryMeta[activeCategory].staticAssets || data.categoryMeta[activeCategory].motionGraphics || data.categoryMeta[activeCategory].html5Ads
+                  ? data.categoryMeta[activeCategory]?.[activeTab] || {}
+                  : data.categoryMeta[activeCategory])
+              : {}
+          }
           iconLibrary={data.iconLibrary || []}
           onSave={handleSaveMeta} 
           onAddIcon={handleAddIcon}
@@ -841,12 +843,18 @@ const Dashboard = () => {
                 />
               ))}
               <CampaignInfoCard 
-                meta={data.categoryMeta?.[activeCategory]?.[activeTab] || (activeCategory === 'All' ? {
-                  description: "An overview of all my display ad campaigns, showcasing static designs, animated GIFs, and interactive HTML5 ads.",
-                  client: "Various Clients",
-                  year: "2026",
-                  tools: []
-                } : null)} 
+                meta={
+                  data.categoryMeta?.[activeCategory]
+                    ? (data.categoryMeta[activeCategory].staticAssets || data.categoryMeta[activeCategory].motionGraphics || data.categoryMeta[activeCategory].html5Ads
+                        ? data.categoryMeta[activeCategory]?.[activeTab] || null
+                        : data.categoryMeta[activeCategory])
+                    : (activeCategory === 'All' ? {
+                        description: "An overview of all my display ad campaigns, showcasing static designs, animated GIFs, and interactive HTML5 ads.",
+                        client: "Various Clients",
+                        year: "2026",
+                        tools: []
+                      } : null)
+                } 
                 topic={activeCategory} 
                 iconLibrary={data.iconLibrary} 
               />

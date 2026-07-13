@@ -656,6 +656,13 @@ const Portfolio = () => {
     ? (customCats.length === 1 ? customCats[0] : 'All')
     : activeCategory;
 
+  const getMeta = (catData, tab) => {
+    if (!catData) return null;
+    return (catData.staticAssets || catData.motionGraphics || catData.html5Ads)
+      ? catData[tab]
+      : catData;
+  };
+
   return (
     <div className="portfolio-layout">
       <Sidebar
@@ -670,19 +677,19 @@ const Portfolio = () => {
         {/* ─── 01 Static Design Assets ─── */}
         <section className="portfolio-section" id="static-assets">
           <SectionHeader number="01" title="Static Design Assets" count={staticItems.length} activeCategory={resolvedCategory} />
-          <BannersGrid items={staticItems} CardComponent={StaticBannerCard} categoryMeta={data.categoryMeta?.[resolvedCategory]?.staticAssets} activeCategory={resolvedCategory} iconLibrary={data.iconLibrary} extraProps={{ onZoom: setZoomedItem }} />
+          <BannersGrid items={staticItems} CardComponent={StaticBannerCard} categoryMeta={getMeta(data.categoryMeta?.[resolvedCategory], 'staticAssets')} activeCategory={resolvedCategory} iconLibrary={data.iconLibrary} extraProps={{ onZoom: setZoomedItem }} />
         </section>
 
         {/* ─── 02 GIF / Animated Banners ─── */}
         <section className="portfolio-section" id="gif-banners">
           <SectionHeader number="02" title="GIF / Animated Banners" count={gifItems.length} activeCategory={resolvedCategory} />
-          <BannersGrid items={gifItems} CardComponent={GifBannerCard} categoryMeta={data.categoryMeta?.[resolvedCategory]?.motionGraphics} activeCategory={resolvedCategory} iconLibrary={data.iconLibrary} extraProps={{ onZoom: setZoomedItem }} />
+          <BannersGrid items={gifItems} CardComponent={GifBannerCard} categoryMeta={getMeta(data.categoryMeta?.[resolvedCategory], 'motionGraphics')} activeCategory={resolvedCategory} iconLibrary={data.iconLibrary} extraProps={{ onZoom: setZoomedItem }} />
         </section>
 
         {/* ─── 03 HTML5 Interactive Ads ─── */}
         <section className="portfolio-section" id="html5-ads">
           <SectionHeader number="03" title="HTML5 Interactive Ads" count={html5Items.length} activeCategory={resolvedCategory} />
-          <BannersGrid items={html5Items} CardComponent={Html5AdCard} categoryMeta={data.categoryMeta?.[resolvedCategory]?.html5Ads} activeCategory={resolvedCategory} iconLibrary={data.iconLibrary} extraProps={{ onZoom: setZoomedItem }} />
+          <BannersGrid items={html5Items} CardComponent={Html5AdCard} categoryMeta={getMeta(data.categoryMeta?.[resolvedCategory], 'html5Ads')} activeCategory={resolvedCategory} iconLibrary={data.iconLibrary} extraProps={{ onZoom: setZoomedItem }} />
         </section>
       </div>
     </div>
