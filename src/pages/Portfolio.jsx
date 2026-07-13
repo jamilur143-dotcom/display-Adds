@@ -25,7 +25,7 @@ const resolveMedia = (url) => {
       return { 
         type: 'gdrive', 
         url: `https://drive.google.com/file/d/${fileId}/preview`,
-        imageUrl: `https://drive.google.com/uc?export=view&id=${fileId}`
+        imageUrl: `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`
       };
     }
   }
