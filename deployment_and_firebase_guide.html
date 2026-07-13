@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>পোর্টফোলিও ওয়েবসাইট ডেপ্লয়মেন্ট এবং ফায়ারবেস ডাটাবেস সেটআপ গাইড</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2.5rem;
+            background-color: #f7fafc;
+        }
+        .container {
+            background-color: #fff;
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+        h1 {
+            color: #1a365d;
+            border-bottom: 3px solid #3182ce;
+            padding-bottom: 0.75rem;
+            margin-top: 0;
+            font-size: 2.2rem;
+            text-align: center;
+        }
+        h2 {
+            color: #2b6cb0;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+            margin-top: 2.5rem;
+            font-size: 1.6rem;
+        }
+        h3 {
+            color: #2d3748;
+            font-size: 1.25rem;
+            margin-top: 1.5rem;
+        }
+        p, li {
+            font-size: 1rem;
+            color: #4a5568;
+        }
+        ol, ul {
+            padding-left: 1.8rem;
+        }
+        li {
+            margin-bottom: 0.75rem;
+        }
+        .step {
+            margin-bottom: 3rem;
+            background: #fcfcfc;
+            border: 1px solid #edf2f7;
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+        .step-title {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1.15rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .badge {
+            background-color: #3182ce;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        .screenshot {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin: 1.5rem auto;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .note {
+            background-color: #ebf8ff;
+            border-left: 4px solid #3182ce;
+            padding: 1.25rem;
+            margin: 2rem 0;
+            border-radius: 6px;
+        }
+        .note p {
+            margin: 0;
+            color: #2b6cb0;
+            font-weight: 500;
+        }
+        .code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #edf2f7;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        .btn-print {
+            display: block;
+            width: 250px;
+            margin: 2rem auto 3rem auto;
+            padding: 0.85rem 2rem;
+            background-color: #3182ce;
+            color: #fff;
+            text-align: center;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(49, 130, 206, 0.3);
+            transition: all 0.2s;
+        }
+        .btn-print:hover {
+            background-color: #2b6cb0;
+            box-shadow: 0 4px 10px rgba(49, 130, 206, 0.2);
+            transform: translateY(-1px);
+        }
+        @media print {
+            body {
+                background-color: #fff;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                padding: 0;
+            }
+            .btn-print {
+                display: none;
+            }
+            .step {
+                page-break-inside: avoid;
+                border: none;
+                padding: 0;
+                margin-bottom: 4rem;
+            }
+            .screenshot {
+                max-height: 450px;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>প্রজেক্ট ডেপ্লয়মেন্ট এবং ফায়ারবেস সেটআপ চিত্রসহ গাইডলাইন</h1>
+    <p style="text-align: center; font-style: italic; color: #718096; margin-bottom: 2rem;">
+        গিটহাব পাবলিশিং, ভার্সেল হোস্টিং এবং ফায়ারবেস ক্লাউড ডাটাবেস সেটআপের প্রতিটি ধাপের ছবিসহ পূর্ণাঙ্গ গাইডলাইন।
+    </p>
+
+    <button class="btn-print" onclick="window.print()">Save as PDF / Print</button>
+
+    <!-- PART 1 -->
+    <h2>📁 পার্ট ১: GitHub Desktop দিয়ে কোড গিটহাবে আপলোড (পাবলিশ) করা</h2>
+    <p>আপনার কম্পিউটারের লোকাল প্রজেক্ট ফোল্ডারটি অনলাইনের গিটহাব অ্যাকাউন্টে নিরাপদে সেভ করার সহজ নিয়ম নিচে দেওয়া হলো:</p>
+
+    <div class="step">
+        <div class="step-title"><span class="badge">ধাপ ১</span> GitHub Desktop সফটওয়্যার ওপেন করা</div>
+        <p>সফটওয়্যারটি চালু করুন। শুরুতে আপনার সামনে এরকম উইন্ডো দেখাবে যেখানে কোনো প্রজেক্ট সিলেক্ট করা থাকবে না অথবা পূর্বের কোনো প্রজেক্ট থাকবে।</p>
+        <img class="screenshot" src="guide_images/media__1783952542191.png" alt="GitHub Desktop Main Screen">
+    </div>
+
+    <div class="step">
+        <div class="step-title"><span class="badge">ধাপ ২</span> লোকাল প্রজেক্ট ফোল্ডার অ্যাড করা</div>
+        <p>ওপরের বাম কোণায় <strong>File</strong> মেনু থেকে <strong>Add local repository...</strong> অপশনে ক্লিক করুন। তাহলে নিচের মতো পপআপ আসবে।</p>
+        <img class="screenshot" src="guide_images/media__1783952705061.png" alt="Add Local Repository Popup">
+    </div>
+
+    <div class="step">
+        <div class="step-title"><span class="badge">ধাপ ৩</span> প্রজেক্টের ফোল্ডার লোকেশন সিলেক্ট করা</div>
+        <p><strong>Choose...</strong> বাটনে ক্লিক করে আপনার ড্রাইভ থেকে প্রজেক্ট ফোল্ডারটি <span class="code">D:\softare\display Adds</span> সিলেক্ট করুন।</p>
+        <img class="screenshot" src="guide_images/media__1783952796181.png" alt="Choose Folder Location">
+    </div>
+
+    <div class="step">
+        <div class="step-title"><span class="badge">ধাপ ৪</span> নতুন রিপোজিটরি তৈরি করার সতর্কতা</div>
+        <p>যেহেতু প্রজেক্টটি আগে কখনো গিটহাবে আপলোড করা হয়নি, তাই লাল বর্ডারে একটি সতর্কবার্তা দেখাবে। সেখানে থাকা নীল রঙের <strong>create a repository</strong> লিঙ্কে ক্লিক করুন।</p>
+        <img class="screenshot" src="guide_images/media__1783952821813.png" alt="Create Repository Warning Link">
+    </div>
+
+    <div class="step">
+        <div class="step-title"><span class="badge">ধাপ ৫</span> গিট ইগনোর (Git ignore) ফাইল সিলেক্ট করা</div>
+        <p>রিপোজিটরি তৈরির ফর্মে প্রজেক্টের নাম দিন এবং **Git ignore** ড্রপডাউন মেনু থেকে **Node** সিলেক্ট করুন। এর ফলে ভারী ও অপ্রয়োজনীয় ফোল্ডারগুলো গিটহাবে আপলোড হবে না। এরপর **Create repository**-তে ক্লিক করুন।</p>
+        <img class="screenshot" src="guide_images/media__1783952846299.png" alt="Create a New Repository Form">
+    </div>
+
+    <div class="step">
+        <div class="step-title"><span class="badge">ধাপ ৬</span> রিপোজিটরি পাবলিশ বাটন</div>
+        <p>রিপোজিটরি ক্রিয়েট হওয়ার পর স্ক্রিনের মাঝখানে নীল রঙের **Publish repository** বাটনটি চলে আসবে। সেটিতে ক্লিক করুন।</p>
+        <img class="screenshot" src="guide_images/media__1783952932097.png" alt="Publish Repository Main Button">
+    </div>
+
+    <div class="step">
+        <div class="step-title"><span class="badge">ধাপ ৭</span> প্রজেক্ট পাবলিক করা (টিক মার্ক তুলে দেওয়া)</div>
+        <p>এখানে সবচেয়ে গুরুত্বপূর্ণ কাজ হলো **Keep this code private** লেখার পাশে থাকা নীল রঙের टिक চিহ্নটি **তুলে দেওয়া (আনচেক করা)**। এর ফলে প্রজেক্টটি লাইভ হোস্ট করা যাবে। এরপর **Publish repository** বাটনে ক্লিক করুন।</p>
+        <img class="screenshot" src="guide_images/media__1783952958249.png" alt="Uncheck Keep Code Private Option">
+    </div>
+
+    <!-- PART 2 -->
+    <h2>🚀 পার্ট ২: Vercel দিয়ে সম্পূর্ণ ফ্রিতে ওয়েবসাইট লাইভ করা</h2>
+    <p>গিটহাবের কোডটি স্বয়ংক্রিয়ভাবে একটি লাইভ ওয়েবসাইটে রূপান্তর করার নিয়ম নিচে দেওয়া হলো:</p>
+
+    <div class="step">
+        <div class="step-title"><span class="badge">ধাপ ১</span> ফ্রী বা Hobby প্ল্যান সিলেক্ট করা</div>
+        <p>Vercel.com-এ গিয়ে গিটহাব দিয়ে লগইন করুন। এরপর প্ল্যান সিলেক্ট করার স্ক্রিনে অবশ্যই **I'm working on personal projects (Hobby)** সিলেক্ট করে **Continue** বাটনে ক্লিক করুন।</p>
+        <img class="screenshot" src="guide_images/media__1783953707400.png" alt="Select Vercel Hobby Plan">
+    </div>
+
+    <div class="step">
+        <div class="step-title"><span class="badge">ধাপ ২</span> গিটহাব কানেক্ট বাটন</div>
+        <p>নতুন প্রজেক্ট তৈরি করার পেজে গিয়ে বাঁদিকের **Import Git Repository** এর নিচে থাকা কালো রঙের **Continue with GitHub** বাটনে ক্লিক করুন।</p>
+        <img class="screenshot" src="guide_images/media__1783953792152.png" alt="Vercel Import Git Repository Connect">
+    </div>
+
+    <div class="step">
+        <div class="step-title"><span class="badge">ধাপ ৩</span> গিটহাব পারমিশন দিন</div>
+        <p>গিটহাবের অথরাইজেশন পেজে সবুজ রঙের **Install** বাটনে ক্লিক করে Vercel-কে আপনার প্রজেক্ট রিড করার পারমিশন দিন।</p>
+        <img class="screenshot" src="guide_images/media__1783953844573.png" alt="Install Vercel Integration on GitHub">
+    </div>
+
+    <div class="step">
+        <div class="step-title"><span class="badge">ধাপ ৪</span> প্রজেক্ট ইম্পোর্ট করা</div>
+        <p>পারমিশন দেওয়া হয়ে গেলে প্রজেক্ট লিস্টে আপনার তৈরি করা **display-Adds** রিপোজিটরিটি দেখতে পাবেন। সেটির পাশে থাকা কালো রঙের **Import** বাটনে ক্লিক করুন।</p>
+        <img class="screenshot" src="guide_images/media__1783953918161.png" alt="Import display-Adds Repository">
+    </div>
+
+    <div class="step">
+        <div class="step-title"><span class="badge">ধাপ ৫</span> ডেপ্লয় (Deploy) বাটন ক্লিক করা</div>
+        <p>কনফিগারেশন পেজে google analytics, build command ইত্যাদি সবকিছু ডিফল্ট রেখে সরাসরি নিচে থাকা কালো রঙের **Deploy** বাটনে ক্লিক করুন।</p>
+        <img class="screenshot" src="guide_images/media__1783953970942.png" alt="Click Deploy on Vercel">
+    </div>
+
+    <div class="step">
+        <div class="step-title"><span class="badge">ধাপ ৬</span> ডেপ্লয়মেন্ট সফল হওয়া এবং লাইভ লিঙ্ক পাওয়া</div>
+        <p>বিল্ড প্রসেস শেষ হলে স্ক্রিনে কনগ্রাচুলেশন অ্যানিমেশন দেখাবে। প্রজেক্টের ওপর ক্লিক করলেই আপনি আপনার সাইটের লাইভ ডোমেইন লিঙ্কটি পেয়ে যাবেন।</p>
+        <img class="screenshot" src="guide_images/media__1783954168358.png" alt="Vercel Deployment Success Screen">
+    </div>
+
+    <!-- PART 3 -->
+    <h2>🔥 পার্ট ৩: Firebase Firestore ক্লাউড ডাটাবেস তৈরি করা</h2>
+    <p>রিয়েল-টাইম তথ্য সিঙ্কের জন্য ফায়ারবেস ডাটাবেস কনফিগারেশন করার নিয়ম নিচে দেওয়া হলো:</p>
+
+    <div class="step">
+        <div class="step-title"><span class="badge">ধাপ ১</span> ফায়ারবেস প্রজেক্টের নাম এন্টার করা</div>
+        <p>Firebase Console-এ গিয়ে **Add project** এ ক্লিক করার পর প্রজেক্টের নাম লিখুন **`display-adds`** এবং প্রজেক্ট ক্রিয়েট করে এগিয়ে যান।</p>
+        <img class="screenshot" src="guide_images/media__1783956431006.png" alt="Firebase Project Name Creation">
+    </div>
+
+    <div class="step">
+        <div class="step-title"><span class="badge">ধাপ ২</span> Databases & Storage মেনু ওপেন করা</div>
+        <p>প্রজেক্টের হোমপেজ থেকে বাঁদিকের মেনুতে থাকা **Databases & Storage** অপশনটির ওপর ক্লিক করে মেনুটি বড় করুন।</p>
+        <img class="screenshot" src="guide_images/media__1783956646637.png" alt="Databases and Storage Menu">
+    </div>
+
+    <div class="step">
+        <div class="step-title"><span class="badge">ধাপ ৩</span> Firestore সিলেক্ট করা</div>
+        <p>মেনু থেকে **NoSQL** সেকশনের নিচে থাকা **Firestore** অপশনটির ওপর ক্লিক করুন।</p>
+        <img class="screenshot" src="guide_images/media__1783956684635.png" alt="Select Firestore from Dropdown">
+    </div>
+
+    <div class="step">
+        <div class="step-title"><span class="badge">ধাপ ৪</span> Create Database বাটন ক্লিক করা</div>
+        <p>Firestore-এর পরিচিতি পেজ লোড হলে সেখানে থাকা কমলা বর্ডারের **Create database** বাটনটিতে ক্লিক করুন।</p>
+        <img class="screenshot" src="guide_images/media__1783956827487.png" alt="Click Create Database Button">
+    </div>
+
+    <div class="step">
+        <div class="step-title"><span class="badge">ধাপ ৫</span> স্ট্যান্ডার্ড এডিশন (Standard Edition) সিলেক্ট করা</div>
+        <p>ডেটাবেসের প্রথম স্টেপে **Standard edition** সিলেক্ট করা অবস্থায় সরাসরি নিচে থাকা নীল রঙের **Next** বাটনে ক্লিক করুন।</p>
+        <img class="screenshot" src="guide_images/media__1783956884130.png" alt="Select Standard Edition Step">
+    </div>
+
+    <div class="step">
+        <div class="step-title"><span class="badge">ধাপ ৬</span> ডাটাবেস লোকেশন নির্ধারণ করা</div>
+        <p>পরের পেজে লোকেশনটি ডিফল্ট **nam5 (United States)** রেখে সরাসরি নিচে থাকা নীল রঙের **Next** বাটনে ক্লিক করুন।</p>
+        <img class="screenshot" src="guide_images/media__1783956928377.png" alt="Choose Database Location">
+    </div>
+
+    <div class="step">
+        <div class="step-title"><span class="badge">ধাপ ৭</span> টেস্ট মোড (Start in test mode) সিলেক্ট করা</div>
+        <p>লোকাল অ্যাপ থেকে ফায়ারবেসে সরাসরি ডাটা রিড ও রাইট করার জন্য দ্বিতীয় অপশন অর্থাৎ **Start in test mode** সিলেক্ট করুন এবং নিচে থাকা **Create** বাটনটি ক্লিক করুন।</p>
+        <img class="screenshot" src="guide_images/media__1783957376284.png" alt="Select Start in Test Mode">
+    </div>
+
+    <div class="step">
+        <div class="step-title"><span class="badge">ধাপ ৮</span> ডাটাবেস প্রস্তুত হওয়া</div>
+        <p>লোডিং প্রসেস শেষ হলে আপনার ফায়ারস্টোর ডেটাবেস প্রস্তুত হয়ে স্ক্রিনে ড্যাশবোর্ড দেখাবে।</p>
+        <img class="screenshot" src="guide_images/media__1783957425661.png" alt="Database Dashboard Ready">
+    </div>
+
+    <div class="step">
+        <div class="step-title"><span class="badge">ধাপ ৯</span> প্রজেক্টের ওয়েব আইকন ক্লিক করা</div>
+        <p>এবার Project Overview পেজে ফিরে গিয়ে প্রজেক্টের নামের নিচে থাকা গোল আইকনগুলোর মধ্যে থেকে ওয়েব ডেপ্লয়মেন্টের জন্য **`</>`** আইকনটিতে ক্লিক করুন।</p>
+        <img class="screenshot" src="guide_images/media__1783957491296.png" alt="Click Web Icon in Project Overview">
+    </div>
+
+    <div class="step">
+        <div class="step-title"><span class="badge">ধাপ ১০</span> এপিআই কী (API Config Code) জেনারেট করা</div>
+        <p>ওয়েব অ্যাপের একটি নাম দিয়ে অ্যাপটি রেজিস্টার করলেই আপনার সামনে ফায়ারবেস কনফিগারেশনের কোড চলে আসবে।</p>
+        <img class="screenshot" src="guide_images/media__1783958543995.png" alt="Generated Firebase Configuration Code">
+    </div>
+
+    <div class="note">
+        <p>💡 ফায়ারবেসের সমস্ত কনফিগারেশন কী এবং কানেকশন কোড ইতিমধ্যেই প্রজেক্টের <span class="code">src/firebase.js</span> ফাইলের ভেতরে ইন্টিগ্রেট করে দেওয়া হয়েছে। গিটহাব ডেস্কটপের মাধ্যমে এটি পুশ করার কারণে এই সেটআপটি স্বয়ংক্রিয়ভাবে সক্রিয় হয়ে গেছে।</p>
+    </div>
+</div>
+
+</body>
+</html>
