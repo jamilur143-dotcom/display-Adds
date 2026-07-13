@@ -717,9 +717,9 @@ body::after {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
-  font-size: 0.78rem;
+  font-size: 0.95rem;
   font-weight: 500;
-  padding: 0.35rem 0.75rem;
+  padding: 0.45rem 0.9rem;
   border-radius: 6px;
   transition: all 0.2s;
 }

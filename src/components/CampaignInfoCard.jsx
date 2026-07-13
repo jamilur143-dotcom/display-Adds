@@ -6,25 +6,25 @@ const CampaignInfoCard = ({ meta, topic, iconLibrary = [] }) => {
   const toolIcons = {
     figma: (
       <span className="tool-tag" key="figma" title="Figma">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M8.5 12a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7zm0-6A3.5 3.5 0 0 1 12 9.5V12H8.5A3.5 3.5 0 0 1 8.5 6zM15.5 12a3.5 3.5 0 1 1 3.5 3.5H15.5V12zm0-6a3.5 3.5 0 0 1 3.5 3.5V12h-3.5V6zM12 12h3.5v3.5A3.5 3.5 0 0 1 12 12.5V12z" fill="#F24E1E"/></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M8.5 12a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7zm0-6A3.5 3.5 0 0 1 12 9.5V12H8.5A3.5 3.5 0 0 1 8.5 6zM15.5 12a3.5 3.5 0 1 1 3.5 3.5H15.5V12zm0-6a3.5 3.5 0 0 1 3.5 3.5V12h-3.5V6zM12 12h3.5v3.5A3.5 3.5 0 0 1 12 12.5V12z" fill="#F24E1E"/></svg>
         Figma
       </span>
     ),
     photoshop: (
       <span className="tool-tag" key="photoshop" title="Adobe Photoshop">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="#001d3d" style={{ borderRadius: '3px' }}><rect width="24" height="24" fill="#001d3d"/><text x="12" y="16" fill="#31a8ff" fontSize="11" fontWeight="bold" fontFamily="sans-serif" textAnchor="middle">Ps</text></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#001d3d" style={{ borderRadius: '3px' }}><rect width="24" height="24" fill="#001d3d"/><text x="12" y="16" fill="#31a8ff" fontSize="11" fontWeight="bold" fontFamily="sans-serif" textAnchor="middle">Ps</text></svg>
         Photoshop
       </span>
     ),
     aftereffects: (
       <span className="tool-tag" key="aftereffects" title="Adobe After Effects">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="#1b122c" style={{ borderRadius: '3px' }}><rect width="24" height="24" fill="#1b122c"/><text x="12" y="16" fill="#d19aff" fontSize="11" fontWeight="bold" fontFamily="sans-serif" textAnchor="middle">Ae</text></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#1b122c" style={{ borderRadius: '3px' }}><rect width="24" height="24" fill="#1b122c"/><text x="12" y="16" fill="#d19aff" fontSize="11" fontWeight="bold" fontFamily="sans-serif" textAnchor="middle">Ae</text></svg>
         After Effects
       </span>
     ),
     gwd: (
       <span className="tool-tag" key="gwd" title="Google Web Designer">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="#1e293b" style={{ borderRadius: '3px' }}><rect width="24" height="24" fill="#1e293b"/><text x="12" y="15" fill="#10b981" fontSize="9" fontWeight="bold" fontFamily="sans-serif" textAnchor="middle">GWD</text></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#1e293b" style={{ borderRadius: '3px' }}><rect width="24" height="24" fill="#1e293b"/><text x="12" y="15" fill="#10b981" fontSize="9" fontWeight="bold" fontFamily="sans-serif" textAnchor="middle">GWD</text></svg>
         Web Designer
       </span>
     )
