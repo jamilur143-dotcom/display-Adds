@@ -31,7 +31,8 @@ const resolveMedia = (url) => {
     }
   }
   
-  if (/\.(mp4|webm|ogg)$/i.test(url)) {
+  const urlWithoutQuery = url.split('?')[0];
+  if (/\.(mp4|webm|ogg)$/i.test(urlWithoutQuery)) {
     return { type: 'video', url };
   }
   
@@ -39,8 +40,8 @@ const resolveMedia = (url) => {
 };
 
 // ── Google Drive Asset Component with Auto-Fallback ──
-const GDriveAsset = ({ media, title, style }) => {
-  const [status, setStatus] = useState('video'); // 'video' | 'image' | 'thumbnail'
+const GDriveAsset = ({ media, title, style, isMotion }) => {
+  const [status, setStatus] = useState(isMotion ? 'video' : 'image');
 
   if (status === 'video') {
     return (
@@ -48,7 +49,7 @@ const GDriveAsset = ({ media, title, style }) => {
         src={media.directUrl} 
         autoPlay loop muted playsInline 
         style={style}
-        onError={() => setStatus('image')}
+        onError={() => setStatus('iframe')}
       />
     );
   }
@@ -59,26 +60,16 @@ const GDriveAsset = ({ media, title, style }) => {
         src={media.directUrl} 
         alt={title} 
         style={style}
-        onError={() => setStatus('thumbnail')}
+        onError={() => setStatus('iframe')}
       />
     );
   }
 
   return (
-    <img 
-      src={media.imageUrl} 
-      alt={title} 
-      style={style}
-      onError={(e) => {
-        // Ultimate fallback: if everything fails, show the preview player iframe
-        e.target.style.display = 'none';
-        const iframe = document.createElement('iframe');
-        iframe.src = media.url;
-        iframe.style.width = '100%';
-        iframe.style.height = '100%';
-        iframe.style.border = 'none';
-        e.target.parentNode.appendChild(iframe);
-      }}
+    <iframe 
+      src={media.url} 
+      title={title} 
+      style={{ ...style, border: 'none' }} 
     />
   );
 };
@@ -417,13 +408,13 @@ const StaticBannerCard = ({ item, onZoom }) => {
             <iframe src={media.url} title={item.title} style={{ width: '100%', height: '100%', border: 'none', pointerEvents: 'none' }} />
           )}
           {item.url && media.type === 'video' && (
-            <video src={media.url} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <video src={media.url} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           )}
           {item.url && media.type === 'image' && (
-            <img src={media.url} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <img src={media.url} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           )}
           {item.url && media.type === 'gdrive' && (
-            <GDriveAsset media={media} title={item.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <GDriveAsset media={media} title={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} isMotion={false} />
           )}
           {!item.url && (
             <>
@@ -478,13 +469,13 @@ const GifBannerCard = ({ item, onZoom }) => {
             <iframe src={media.url} title={item.title} style={{ width: '100%', height: '100%', border: 'none', pointerEvents: 'none' }} />
           )}
           {item.url && media.type === 'video' && (
-            <video src={media.url} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <video src={media.url} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           )}
           {item.url && media.type === 'image' && (
-            <img src={media.url} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <img src={media.url} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           )}
           {item.url && media.type === 'gdrive' && (
-            <GDriveAsset media={media} title={item.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <GDriveAsset media={media} title={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} isMotion={true} />
           )}
           {!item.url && <div className="gif-shimmer" />}
           {!item.url && <span className="banner-size-text" style={{ color, position: 'relative', zIndex: 1 }}>{item.adSize}</span>}

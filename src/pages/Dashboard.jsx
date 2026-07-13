@@ -39,7 +39,8 @@ const resolveMedia = (url) => {
     }
   }
   
-  if (/\.(mp4|webm|ogg)$/i.test(url)) {
+  const urlWithoutQuery = url.split('?')[0];
+  if (/\.(mp4|webm|ogg)$/i.test(urlWithoutQuery)) {
     return { type: 'video', url };
   }
   
