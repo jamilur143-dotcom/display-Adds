@@ -17,15 +17,15 @@ const resolveMedia = (url) => {
   }
   
   // Google Drive
-  if (url.includes('drive.google.com')) {
-    const gdReg = /\/file\/d\/([^\/]+)/;
+  if (url.includes('drive.google.com') || url.includes('docs.google.com')) {
+    const gdReg = /\/file\/d\/([^\/&\?]+)|[?&]id=([^\/&\?]+)/;
     const gdMatch = url.match(gdReg);
     if (gdMatch) {
-      const fileId = gdMatch[1];
+      const fileId = gdMatch[1] || gdMatch[2];
       return { 
         type: 'gdrive', 
         url: `https://drive.google.com/file/d/${fileId}/preview`,
-        imageUrl: `https://lh3.googleusercontent.com/d/${fileId}`
+        imageUrl: `https://drive.google.com/uc?export=view&id=${fileId}`
       };
     }
   }
@@ -188,35 +188,21 @@ const ZoomModal = ({ item, onClose }) => {
             }}
           />
         ) : media.type === 'gdrive' ? (
-          item.type === 'static' ? (
-            <img 
-              src={media.imageUrl} 
-              alt="Zoomed Asset" 
-              draggable="false"
-              onMouseDown={handleMouseDown}
-              onDoubleClick={() => { setScale(1.2); setPosition({ x: 0, y: 0 }); }}
-              style={{
-                maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain',
-                transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-                transition: isDragging ? 'none' : 'transform 0.15s ease-out',
-                cursor: scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'zoom-in',
-                boxShadow: '0 20px 60px rgba(0,0,0,0.7)', borderRadius: '4px',
-                userSelect: 'none', WebkitUserDrag: 'none'
-              }} 
-            />
-          ) : (
-            <iframe 
-              src={media.url} 
-              title={item.title} 
-              style={{
-                width: item.width || 640, height: item.height || 360,
-                transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-                transition: isDragging ? 'none' : 'transform 0.15s ease-out',
-                border: 'none', background: 'transparent',
-                boxShadow: '0 20px 60px rgba(0,0,0,0.7)', borderRadius: '4px',
-              }}
-            />
-          )
+          <img 
+            src={media.imageUrl} 
+            alt="Zoomed Asset" 
+            draggable="false"
+            onMouseDown={handleMouseDown}
+            onDoubleClick={() => { setScale(1.2); setPosition({ x: 0, y: 0 }); }}
+            style={{
+              maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain',
+              transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
+              transition: isDragging ? 'none' : 'transform 0.15s ease-out',
+              cursor: scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'zoom-in',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.7)', borderRadius: '4px',
+              userSelect: 'none', WebkitUserDrag: 'none'
+            }} 
+          />
         ) : media.type === 'video' ? (
           <video 
             src={media.url} 
@@ -386,16 +372,13 @@ const StaticBannerCard = ({ item, onZoom }) => {
           {item.url && media.type === 'youtube' && (
             <iframe src={media.url} title={item.title} style={{ width: '100%', height: '100%', border: 'none', pointerEvents: 'none' }} />
           )}
-          {item.url && media.type === 'gdrive' && (
-            <iframe src={media.url} title={item.title} style={{ width: '100%', height: '100%', border: 'none', pointerEvents: 'none' }} />
-          )}
           {item.url && media.type === 'video' && (
             <video src={media.url} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           )}
           {item.url && media.type === 'image' && (
             <img src={media.url} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           )}
-          {item.url && media.type === 'gdrive' && item.type === 'static' && (
+          {item.url && media.type === 'gdrive' && (
             <img src={media.imageUrl} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           )}
           {!item.url && (
@@ -450,16 +433,13 @@ const GifBannerCard = ({ item, onZoom }) => {
           {item.url && media.type === 'youtube' && (
             <iframe src={media.url} title={item.title} style={{ width: '100%', height: '100%', border: 'none', pointerEvents: 'none' }} />
           )}
-          {item.url && media.type === 'gdrive' && (
-            <iframe src={media.url} title={item.title} style={{ width: '100%', height: '100%', border: 'none', pointerEvents: 'none' }} />
-          )}
           {item.url && media.type === 'video' && (
             <video src={media.url} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           )}
           {item.url && media.type === 'image' && (
             <img src={media.url} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           )}
-          {item.url && media.type === 'gdrive' && item.type === 'static' && (
+          {item.url && media.type === 'gdrive' && (
             <img src={media.imageUrl} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           )}
           {!item.url && <div className="gif-shimmer" />}

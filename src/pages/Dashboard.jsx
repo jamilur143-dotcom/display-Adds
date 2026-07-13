@@ -25,15 +25,15 @@ const resolveMedia = (url) => {
   }
   
   // Google Drive
-  if (url.includes('drive.google.com')) {
-    const gdReg = /\/file\/d\/([^\/]+)/;
+  if (url.includes('drive.google.com') || url.includes('docs.google.com')) {
+    const gdReg = /\/file\/d\/([^\/&\?]+)|[?&]id=([^\/&\?]+)/;
     const gdMatch = url.match(gdReg);
     if (gdMatch) {
-      const fileId = gdMatch[1];
+      const fileId = gdMatch[1] || gdMatch[2];
       return { 
         type: 'gdrive', 
         url: `https://drive.google.com/file/d/${fileId}/preview`,
-        imageUrl: `https://lh3.googleusercontent.com/d/${fileId}`
+        imageUrl: `https://drive.google.com/uc?export=view&id=${fileId}`
       };
     }
   }
@@ -244,11 +244,11 @@ const SortableItem = ({ id, item, allCategories, onCategoryChange, onEdit, onDel
         const media = resolveMedia(item.url);
         if (!item.url) return <div className="dash-card-img-placeholder" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.03)', color: 'var(--text-secondary)', height: '120px', fontSize: '0.85rem' }}>Empty Slot</div>;
         
-        if (media.type === 'youtube' || media.type === 'gdrive') {
+        if (media.type === 'youtube') {
           return (
             <div className="dash-card-img" style={{ position: 'relative', overflow: 'hidden' }}>
               <iframe 
-                src={media.type === 'gdrive' && item.type === 'static' ? media.imageUrl : media.url} 
+                src={media.url} 
                 title={item.title} 
                 style={{ width: '100%', height: '100%', border: 'none', pointerEvents: 'none' }} 
               />
