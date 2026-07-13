@@ -570,9 +570,21 @@ const Html5AdCard = ({ item, onZoom }) => {
 
 // ── Banners grid ───────────────────────────────────────────────────────────
 const BannersGrid = ({ items, CardComponent, categoryMeta, activeCategory, iconLibrary = [], extraProps = {} }) => {
+  const sortedSizes = [...AD_SIZES].sort((a, b) => {
+    const order = {
+      'vertical': 1,
+      'skyscraper': 1,
+      'billboard': 2,
+      'leaderboard': 2,
+      'horizontal': 2,
+      'square': 3
+    };
+    return (order[a.type] || 99) - (order[b.type] || 99);
+  });
+
   return (
     <div className="banners-grid">
-      {AD_SIZES.map(sizeDef => {
+      {sortedSizes.map(sizeDef => {
         // Find if user uploaded an item for this specific size
         const matchedItem = items.find(i => i.adSize === sizeDef.label);
         
