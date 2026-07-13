@@ -590,7 +590,9 @@ const BannersGrid = ({ items, CardComponent, categoryMeta, activeCategory, iconL
     <div className="banners-grid">
       {sortedSizes.map(sizeDef => {
         // Find if user uploaded an item for this specific size
-        const matchedItem = items.find(i => i.adSize === sizeDef.label);
+        const matchedItems = items.filter(i => i.adSize === sizeDef.label);
+        // Prefer an item that has a valid url (in case "All" view merges multiple categories)
+        const matchedItem = matchedItems.find(i => i.url) || matchedItems[0];
         
         // If matched, use it. Otherwise, create a placeholder using the size definition
         const displayItem = matchedItem || {
