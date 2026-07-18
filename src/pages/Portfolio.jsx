@@ -641,6 +641,31 @@ const Portfolio = () => {
     });
     return () => unsubscribe();
   }, []);
+
+  // Sync all GIF animations to play at the exact same time
+  useEffect(() => {
+    const syncGifs = () => {
+      const gifElements = document.querySelectorAll('.gif-banner-box img');
+      gifElements.forEach(img => {
+        const src = img.src;
+        if (src && !src.startsWith('data:')) {
+          img.src = '';
+          img.src = src;
+        }
+      });
+    };
+
+    // Run sync after a short delay to allow images to load and mount
+    const timeoutId = setTimeout(syncGifs, 600);
+
+    // Periodically re-sync every 15 seconds to prevent browser render drift
+    const intervalId = setInterval(syncGifs, 15000);
+
+    return () => {
+      clearTimeout(timeoutId);
+      clearInterval(intervalId);
+    };
+  }, [activeCategory, data]);
   
   if (!data) return null;
 
