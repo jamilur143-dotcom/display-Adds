@@ -361,6 +361,7 @@ const UploadModal = ({ isOpen, onClose, onUpload, categories, defaultCategory, e
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [title, setTitle] = useState('');
+  const [savedTitles, setSavedTitles] = useState([]);
   const [category, setCategory] = useState('');
   const [newCat, setNewCat] = useState('');
   const [adSize, setAdSize] = useState('300 × 250');
@@ -385,12 +386,19 @@ const UploadModal = ({ isOpen, onClose, onUpload, categories, defaultCategory, e
         setAdUrl(editingItem.url && typeof editingItem.url === 'string' && !editingItem.url.startsWith('data:') ? editingItem.url : '');
         setFile(null);
       } else {
-        setTitle(localStorage.getItem('lastUploadedAssetTitle') || '');
+        setTitle('');
         setCategory(defaultCategory !== 'All' ? defaultCategory : fallbackCat);
         setAdSize('300 × 250');
         setPreview(null);
         setAdUrl('');
         setFile(null);
+      }
+      
+      try {
+        const saved = JSON.parse(localStorage.getItem('savedAssetTitles') || '[]');
+        setSavedTitles(saved);
+      } catch (e) {
+        setSavedTitles([]);
       }
       
       setTitleError(false);
@@ -496,9 +504,20 @@ const UploadModal = ({ isOpen, onClose, onUpload, categories, defaultCategory, e
         finalType = editingItem.type || editingItem.sizeType || 'html5';
       }
 
+      if (!editingItem && title.trim()) {
+        try {
+          const saved = JSON.parse(localStorage.getItem('savedAssetTitles') || '[]');
+          if (!saved.includes(title.trim())) {
+            saved.unshift(title.trim());
+            if (saved.length > 30) saved.pop();
+            localStorage.setItem('savedAssetTitles', JSON.stringify(saved));
+          }
+        } catch(e) {}
+      }
+
       onUpload({
         fileData: finalUrl,
-        title,
+        title: title.trim(),
         category: category === 'NEW_CATEGORY' ? newCat : category,
         adSize,
         weight: Math.round((file?.size || 0) / 1024) || 150,
@@ -566,11 +585,10 @@ const UploadModal = ({ isOpen, onClose, onUpload, categories, defaultCategory, e
             <input 
               type="text" 
               value={title} 
+              list="saved-titles"
               onChange={e => { 
-                const newTitle = e.target.value;
-                setTitle(newTitle); 
+                setTitle(e.target.value); 
                 setTitleError(false);
-                if (!editingItem) localStorage.setItem('lastUploadedAssetTitle', newTitle);
               }} 
               placeholder="e.g., Summer Sale Banner" 
               disabled={isUploading}
@@ -581,12 +599,12 @@ const UploadModal = ({ isOpen, onClose, onUpload, categories, defaultCategory, e
                 width: '100%'
               }}
             />
+            <datalist id="saved-titles">
+              {savedTitles.map(t => <option key={t} value={t} />)}
+            </datalist>
             {title && !isUploading && (
               <span 
-                onClick={() => {
-                  setTitle('');
-                  if (!editingItem) localStorage.removeItem('lastUploadedAssetTitle');
-                }}
+                onClick={() => setTitle('')}
                 style={{
                   position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)',
                   cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '1.2rem',
