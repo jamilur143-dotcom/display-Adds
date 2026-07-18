@@ -385,7 +385,7 @@ const UploadModal = ({ isOpen, onClose, onUpload, categories, defaultCategory, e
         setAdUrl(editingItem.url && typeof editingItem.url === 'string' && !editingItem.url.startsWith('data:') ? editingItem.url : '');
         setFile(null);
       } else {
-        setTitle('');
+        setTitle(localStorage.getItem('lastUploadedAssetTitle') || '');
         setCategory(defaultCategory !== 'All' ? defaultCategory : fallbackCat);
         setAdSize('300 × 250');
         setPreview(null);
@@ -562,17 +562,44 @@ const UploadModal = ({ isOpen, onClose, onUpload, categories, defaultCategory, e
 
         <div className="form-group">
           <label style={{ color: titleError ? '#f87171' : 'inherit' }}>Title</label>
-          <input 
-            type="text" 
-            value={title} 
-            onChange={e => { setTitle(e.target.value); setTitleError(false); }} 
-            placeholder="e.g., Summer Sale Banner" 
-            disabled={isUploading}
-            style={{ 
-              borderColor: titleError ? '#f87171' : 'transparent',
-              boxShadow: titleError ? '0 0 0 1px #f87171' : 'none'
-            }}
-          />
+          <div style={{ position: 'relative' }}>
+            <input 
+              type="text" 
+              value={title} 
+              onChange={e => { 
+                const newTitle = e.target.value;
+                setTitle(newTitle); 
+                setTitleError(false);
+                if (!editingItem) localStorage.setItem('lastUploadedAssetTitle', newTitle);
+              }} 
+              placeholder="e.g., Summer Sale Banner" 
+              disabled={isUploading}
+              style={{ 
+                borderColor: titleError ? '#f87171' : 'transparent',
+                boxShadow: titleError ? '0 0 0 1px #f87171' : 'none',
+                paddingRight: '2.5rem',
+                width: '100%'
+              }}
+            />
+            {title && !isUploading && (
+              <span 
+                onClick={() => {
+                  setTitle('');
+                  if (!editingItem) localStorage.removeItem('lastUploadedAssetTitle');
+                }}
+                style={{
+                  position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)',
+                  cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '1.2rem',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(255,255,255,0.05)',
+                  userSelect: 'none'
+                }}
+                title="Clear Title"
+              >
+                ×
+              </span>
+            )}
+          </div>
           {titleError && <span style={{ color: '#f87171', fontSize: '0.75rem', marginTop: '0.25rem', display: 'block' }}>⚠️ Title is required. Please type a name.</span>}
         </div>
 
