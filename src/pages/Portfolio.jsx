@@ -23,13 +23,14 @@ const resolveMedia = (item) => {
     const gdMatch = url.match(gdReg);
     if (gdMatch) {
       const fileId = gdMatch[1] || gdMatch[2];
+      const timeParam = item.updatedAt ? `&t=${item.updatedAt}` : '';
       let gdUrl = `https://drive.google.com/file/d/${fileId}/preview`;
       if (item.updatedAt) gdUrl += `?t=${item.updatedAt}`;
       return { 
         type: 'gdrive', 
         url: gdUrl,
-        imageUrl: `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`,
-        directUrl: `https://drive.google.com/uc?export=download&id=${fileId}`
+        imageUrl: `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000${timeParam}`,
+        directUrl: `https://drive.google.com/uc?export=download&id=${fileId}${timeParam}`
       };
     }
   }
