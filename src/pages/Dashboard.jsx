@@ -812,6 +812,7 @@ const Dashboard = () => {
           weight: assetData.weight,
           url: assetData.fileData,
           tools: 'Uploaded',
+          updatedAt: Date.now()
         };
         newList = [newItem, ...prev[activeTab]];
       }
