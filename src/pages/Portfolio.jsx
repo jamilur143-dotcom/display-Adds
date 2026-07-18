@@ -43,26 +43,22 @@ const resolveMedia = (item) => {
   return { type: 'image', url };
 };
 
-// ── Google Drive Asset Component with Auto-Fallback ──
-const GDriveAsset = ({ media, title, style }) => {
-  const [status, setStatus] = useState('image');
-
-  if (status === 'image') {
-    return (
-      <img 
-        src={media.directUrl} 
-        alt={title} 
-        style={style}
-        onError={() => setStatus('thumbnail')}
-      />
-    );
-  }
-
+// ── Google Drive Asset Component ──
+const GDriveAsset = ({ media, title, style, ...rest }) => {
   return (
-    <img 
-      src={media.imageUrl} 
-      alt={title} 
-      style={style}
+    <iframe 
+      src={media.url} 
+      title={title} 
+      style={{ 
+        ...style, 
+        border: 'none', 
+        pointerEvents: 'none',
+        width: style?.width || '100%',
+        height: style?.height || '100%'
+      }}
+      allow="autoplay"
+      loading="lazy"
+      {...rest}
     />
   );
 };
