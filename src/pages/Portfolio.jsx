@@ -3,8 +3,9 @@ import { getStoredData, AD_SIZES } from '../data/mockData';
 import { syncPortfolioData } from '../firebase';
 import CampaignInfoCard from '../components/CampaignInfoCard';
 
-const resolveMedia = (url) => {
-  if (!url) return { type: 'unknown', url: '' };
+const resolveMedia = (item) => {
+  if (!item || !item.url) return { type: 'unknown', url: '' };
+  const url = item.url;
   
   if (url.startsWith('data:video/')) return { type: 'video', url };
   if (url.startsWith('data:image/')) return { type: 'image', url };
@@ -22,9 +23,11 @@ const resolveMedia = (url) => {
     const gdMatch = url.match(gdReg);
     if (gdMatch) {
       const fileId = gdMatch[1] || gdMatch[2];
+      let gdUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+      if (item.updatedAt) gdUrl += `?t=${item.updatedAt}`;
       return { 
         type: 'gdrive', 
-        url: `https://drive.google.com/file/d/${fileId}/preview`,
+        url: gdUrl,
         imageUrl: `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`,
         directUrl: `https://drive.google.com/uc?export=download&id=${fileId}`
       };
@@ -70,7 +73,7 @@ const ZoomModal = ({ item, onClose }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [iframeLoaded, setIframeLoaded] = useState(false);
-  const media = resolveMedia(item?.url);
+  const media = resolveMedia(item);
 
   useEffect(() => {
     if (item) {
@@ -380,7 +383,7 @@ const SizeTag = ({ item }) => {
 const StaticBannerCard = ({ item, onZoom }) => {
   const { sw, sh } = scaleSize(item.width, item.height, item.sizeType);
   const color = TYPE_COLORS[item.sizeType] || '#007AFF';
-  const media = resolveMedia(item.url);
+  const media = resolveMedia(item);
 
   return (
     <div className={`banner-card span-${item.sizeType}`}>
@@ -442,7 +445,7 @@ const StaticBannerCard = ({ item, onZoom }) => {
 const GifBannerCard = ({ item, onZoom }) => {
   const { sw, sh } = scaleSize(item.width, item.height, item.sizeType);
   const color = TYPE_COLORS[item.sizeType] || '#6c63ff';
-  const media = resolveMedia(item.url);
+  const media = resolveMedia(item);
 
   return (
     <div className={`banner-card span-${item.sizeType}`}>

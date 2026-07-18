@@ -11,8 +11,9 @@ import { getStoredData, CATEGORIES, AD_SIZES } from '../data/mockData';
 import { syncPortfolioData, savePortfolioData, uploadFileToStorage } from '../firebase';
 import CampaignInfoCard from '../components/CampaignInfoCard';
 
-const resolveMedia = (url) => {
-  if (!url) return { type: 'unknown', url: '' };
+const resolveMedia = (item) => {
+  if (!item || !item.url) return { type: 'unknown', url: '' };
+  const url = item.url;
   
   if (url.startsWith('data:video/')) return { type: 'video', url };
   if (url.startsWith('data:image/')) return { type: 'image', url };
@@ -30,9 +31,11 @@ const resolveMedia = (url) => {
     const gdMatch = url.match(gdReg);
     if (gdMatch) {
       const fileId = gdMatch[1] || gdMatch[2];
+      let gdUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+      if (item.updatedAt) gdUrl += `?t=${item.updatedAt}`;
       return { 
         type: 'gdrive', 
-        url: `https://drive.google.com/file/d/${fileId}/preview`,
+        url: gdUrl,
         imageUrl: `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`,
         directUrl: `https://drive.google.com/uc?export=download&id=${fileId}`
       };
@@ -296,7 +299,7 @@ const SortableItem = ({ id, item, allCategories, onCategoryChange, onEdit, onDel
       </div>
       
       {(() => {
-        const media = resolveMedia(item.url);
+        const media = resolveMedia(item);
         if (!item.url) return <div className="dash-card-img-placeholder" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.03)', color: 'var(--text-secondary)', height: '120px', fontSize: '0.85rem' }}>Empty Slot</div>;
         
         if (media.type === 'youtube') {
@@ -793,7 +796,8 @@ const Dashboard = () => {
           height: sizeInfo.height,
           sizeType: sizeInfo.type,
           url: assetData.fileData,
-          weight: assetData.weight || i.weight // keep old weight if no new file
+          weight: assetData.weight || i.weight, // keep old weight if no new file
+          updatedAt: Date.now()
         } : i);
       } else {
         const newItem = {
