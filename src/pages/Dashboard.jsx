@@ -745,11 +745,29 @@ const Dashboard = () => {
 
   const handleSaveMeta = (cat, metaObj) => {
     setData(prev => {
+      const currentCatMeta = prev.categoryMeta?.[cat] || {};
+      const isLegacyFlat = !currentCatMeta.staticAssets && !currentCatMeta.motionGraphics && !currentCatMeta.html5Ads && Object.keys(currentCatMeta).length > 0;
+      
+      let newCatMeta = {};
+      if (isLegacyFlat) {
+        newCatMeta = {
+          staticAssets: { ...currentCatMeta },
+          motionGraphics: { ...currentCatMeta },
+          html5Ads: { ...currentCatMeta },
+          [activeTab]: metaObj
+        };
+      } else {
+        newCatMeta = {
+          ...currentCatMeta,
+          [activeTab]: metaObj
+        };
+      }
+
       const next = {
         ...prev,
         categoryMeta: {
           ...prev.categoryMeta,
-          [cat]: metaObj
+          [cat]: newCatMeta
         }
       };
       savePortfolioData(next);
