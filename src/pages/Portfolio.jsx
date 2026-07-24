@@ -656,11 +656,34 @@ const Portfolio = () => {
     e.preventDefault();
     if (!contactForm.name || !contactForm.email) return;
     setContactStatus('sending');
+
+    // 1. Save lead to Firebase for Dashboard Overview
     const success = await saveLead(contactForm);
+
+    // 2. Send direct email notification to dotzmatrix5@gmail.com
+    try {
+      await fetch("https://formsubmit.co/ajax/dotzmatrix5@gmail.com", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          _subject: `New Portfolio Lead: ${contactForm.name}`,
+          Name: contactForm.name,
+          Email: contactForm.email,
+          Message: contactForm.message || "No message provided",
+          _captcha: "false"
+        })
+      });
+    } catch (emailErr) {
+      console.error("Email notification error:", emailErr);
+    }
+
     if (success) {
       setContactStatus('sent');
       setContactForm({ name: '', email: '', message: '' });
-      setTimeout(() => setContactStatus(''), 3000);
+      setTimeout(() => setContactStatus(''), 4000);
     } else {
       setContactStatus('error');
     }
