@@ -728,20 +728,12 @@ const Portfolio = () => {
       clearInterval(intervalId);
     };
   }, [activeCategory, data]);
-  
-  if (!data) return null;
-
-  const filter = arr =>
-    activeCategory === 'All' ? arr : arr.filter(i => i.category === activeCategory);
-
-  const staticItems = filter(data.staticAssets).map(i => ({ ...i, type: i.type || 'static' }));
-  const gifItems    = filter(data.motionGraphics).map(i => ({ ...i, type: i.type || 'gif' }));
-  const html5Items  = filter(data.html5Ads).map(i => ({ ...i, type: i.type || 'html5' }));
-
-  const customCats = (data.categories || []).filter(c => c !== 'All');
-  const resolvedCategory = activeCategory === 'All'
-    ? (customCats.length === 1 ? customCats[0] : 'All')
-    : activeCategory;
+  const customCats = data ? (data.categories || []).filter(c => c !== 'All') : [];
+  const resolvedCategory = data
+    ? (activeCategory === 'All'
+      ? (customCats.length === 1 ? customCats[0] : 'All')
+      : activeCategory)
+    : 'All';
 
   // Sync SEO Meta Tags dynamically
   useEffect(() => {
@@ -771,6 +763,15 @@ const Portfolio = () => {
     metaKeywords.setAttribute('content', keywords);
 
   }, [resolvedCategory, data]);
+
+  if (!data) return null;
+
+  const filter = arr =>
+    activeCategory === 'All' ? arr : arr.filter(i => i.category === activeCategory);
+
+  const staticItems = filter(data.staticAssets).map(i => ({ ...i, type: i.type || 'static' }));
+  const gifItems    = filter(data.motionGraphics).map(i => ({ ...i, type: i.type || 'gif' }));
+  const html5Items  = filter(data.html5Ads).map(i => ({ ...i, type: i.type || 'html5' }));
 
   const getMeta = (catData, tab) => {
     if (!catData) return null;
