@@ -329,6 +329,30 @@ const CategoryMetaEditor = ({ activeCategory, activeTabLabel, categoryMeta = {},
           <input type="url" value={socialLinks.website || ''} onChange={e => handleSocialChange('website', e.target.value)} placeholder="https://..." />
         </div>
 
+        {/* Default Software Checkboxes requested by user */}
+        <div className="form-group" style={{ marginBottom: '1.5rem', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+          <label style={{ display: 'block', marginBottom: '0.75rem', fontWeight: '600', color: 'var(--accent-color)' }}>Default Software Tools</label>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            {[
+              { id: 'figma', label: 'Figma' },
+              { id: 'photoshop', label: 'Photoshop' },
+              { id: 'illustrator', label: 'Illustrator' },
+              { id: 'aftereffects', label: 'After Effects' },
+              { id: 'gwd', label: 'Google Web Designer' }
+            ].map(tool => (
+              <label key={tool.id} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer', fontSize: '0.85rem' }}>
+                <input 
+                  type="checkbox" 
+                  checked={tools.includes(tool.id)} 
+                  onChange={() => toggleTool(tool.id)}
+                  style={{ cursor: 'pointer' }}
+                />
+                {tool.label}
+              </label>
+            ))}
+          </div>
+        </div>
+
         <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'flex-end' }}>
           <button className="btn-primary" onClick={handleSave} style={{ width: '100%', justifyContent: 'center' }}>
             Save Settings
