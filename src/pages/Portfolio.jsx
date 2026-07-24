@@ -740,18 +740,40 @@ const Portfolio = () => {
         </section>
 
         {/* ─── Contact Form for Lead Capture ─── */}
-        <section className="portfolio-section contact-section" id="contact" style={{ marginTop: '4rem', padding: '3rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-          <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Get in Touch</h2>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>Interested in working together? Drop your email and we will get back to you.</p>
-          <form onSubmit={handleContactSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '500px' }}>
-            <input type="text" placeholder="Your Name" value={contactForm.name} onChange={e => setContactForm({...contactForm, name: e.target.value})} required style={{ padding: '0.8rem 1rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'rgba(0,0,0,0.2)', color: '#fff' }} />
-            <input type="email" placeholder="Your Email" value={contactForm.email} onChange={e => setContactForm({...contactForm, email: e.target.value})} required style={{ padding: '0.8rem 1rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'rgba(0,0,0,0.2)', color: '#fff' }} />
-            <textarea placeholder="Message (Optional)" value={contactForm.message} onChange={e => setContactForm({...contactForm, message: e.target.value})} rows="4" style={{ padding: '0.8rem 1rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'rgba(0,0,0,0.2)', color: '#fff', resize: 'vertical' }} />
-            <button type="submit" className="btn-primary" disabled={contactStatus === 'sending'} style={{ padding: '0.8rem', marginTop: '0.5rem', justifyContent: 'center' }}>
-              {contactStatus === 'sending' ? 'Sending...' : contactStatus === 'sent' ? 'Sent Successfully!' : 'Send Message'}
-            </button>
-            {contactStatus === 'error' && <span style={{ color: '#ef4444', fontSize: '0.85rem' }}>Error sending message. Try again.</span>}
-          </form>
+        <section className="portfolio-section contact-section" id="contact" style={{ marginTop: '4rem', padding: '3rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid var(--border-color)', display: 'flex', flexWrap: 'wrap', gap: '4rem', alignItems: 'center' }}>
+          
+          {/* Left Column: Form */}
+          <div style={{ flex: '1', minWidth: '300px' }}>
+            <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Get in Touch</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>Interested in working together? Drop your email and we will get back to you.</p>
+            
+            <form onSubmit={handleContactSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ position: 'relative' }}>
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <input type="text" placeholder="Your Name" value={contactForm.name} onChange={e => setContactForm({...contactForm, name: e.target.value})} required style={{ width: '100%', padding: '0.8rem 1rem 0.8rem 2.7rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'rgba(0,0,0,0.2)', color: '#fff', boxSizing: 'border-box' }} />
+              </div>
+
+              <div style={{ position: 'relative' }}>
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                <input type="email" placeholder="Your Email" value={contactForm.email} onChange={e => setContactForm({...contactForm, email: e.target.value})} required style={{ width: '100%', padding: '0.8rem 1rem 0.8rem 2.7rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'rgba(0,0,0,0.2)', color: '#fff', boxSizing: 'border-box' }} />
+              </div>
+
+              <textarea placeholder="Message (Optional)" value={contactForm.message} onChange={e => setContactForm({...contactForm, message: e.target.value})} rows="4" style={{ width: '100%', padding: '0.8rem 1rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'rgba(0,0,0,0.2)', color: '#fff', resize: 'vertical', boxSizing: 'border-box' }} />
+              
+              <button type="submit" className="btn-primary" disabled={contactStatus === 'sending'} style={{ padding: '0.8rem', marginTop: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                {contactStatus === 'sending' ? 'Sending...' : contactStatus === 'sent' ? 'Sent Successfully!' : 'Send Message'}
+                {contactStatus !== 'sending' && contactStatus !== 'sent' && (
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                )}
+              </button>
+              {contactStatus === 'error' && <span style={{ color: '#ef4444', fontSize: '0.85rem' }}>Error sending message. Try again.</span>}
+            </form>
+          </div>
+
+          {/* Right Column: Image */}
+          <div style={{ flex: '1', display: 'flex', justifyContent: 'center', alignItems: 'center', minWidth: '300px' }}>
+            <img src="/contact_illustration.jpg" alt="Creative Display Ads Agency" style={{ maxWidth: '100%', height: 'auto', borderRadius: '12px', boxShadow: '0 10px 30px rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.1)' }} />
+          </div>
         </section>
       </div>
     </div>
