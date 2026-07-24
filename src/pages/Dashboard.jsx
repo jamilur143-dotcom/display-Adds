@@ -327,10 +327,14 @@ const SortableItem = ({ id, item, allCategories, onCategoryChange, onEdit, onDel
         if (media.type === 'gdrive') {
           return (
             <div className="dash-card-img" style={{ position: 'relative', overflow: 'hidden' }}>
-              <iframe 
-                src={media.url} 
-                title={item.title} 
-                style={{ width: '100%', height: '100%', border: 'none' }} 
+              <img 
+                src={media.imageUrl} 
+                alt={item.title} 
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = media.directUrl;
+                }}
               />
             </div>
           );

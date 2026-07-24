@@ -45,19 +45,36 @@ const resolveMedia = (item) => {
 
 // ── Google Drive Asset Component ──
 const GDriveAsset = ({ media, title, style, ...rest }) => {
+  const [useIframe, setUseIframe] = useState(false);
+
+  if (useIframe) {
+    return (
+      <iframe 
+        src={media.url} 
+        title={title} 
+        style={{ 
+          ...style, 
+          border: 'none', 
+          pointerEvents: 'none',
+          width: style?.width || '100%',
+          height: style?.height || '100%'
+        }}
+        allow="autoplay"
+        loading="lazy"
+        {...rest}
+      />
+    );
+  }
+
   return (
-    <iframe 
-      src={media.url} 
-      title={title} 
+    <img 
+      src={media.imageUrl} 
+      alt={title} 
       style={{ 
         ...style, 
-        border: 'none', 
-        pointerEvents: 'none',
-        width: style?.width || '100%',
-        height: style?.height || '100%'
+        objectFit: style?.objectFit || 'contain'
       }}
-      allow="autoplay"
-      loading="lazy"
+      onError={() => setUseIframe(true)}
       {...rest}
     />
   );
