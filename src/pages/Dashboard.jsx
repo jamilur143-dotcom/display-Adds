@@ -116,200 +116,226 @@ const CategoryMetaEditor = ({ activeCategory, activeTabLabel, categoryMeta = {},
     alert(`Campaign details saved for topic "${activeCategory}"!`);
   };
 
-  const availableTools = ['figma', 'photoshop', 'illustrator', 'aftereffects', 'gwd'];
-
   return (
     <div className="campaign-meta-editor" style={{
-      background: 'var(--surface-color)', border: '1px solid var(--border-color)',
-      padding: '1.5rem', borderRadius: 'var(--border-radius)', marginBottom: '2rem'
+      marginBottom: '2rem',
+      display: 'flex',
+      gap: '1.5rem',
+      flexWrap: 'wrap',
+      alignItems: 'flex-start'
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
-        <span style={{ fontSize: '1.2rem' }}>📄</span>
-        <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: 'var(--accent-color)' }}>
-          Campaign Details ({activeCategory}) - {activeTabLabel}
-        </h3>
-      </div>
       
-      <div className="form-row" style={{ marginBottom: '1rem' }}>
-        <div className="form-group" style={{ flex: 1 }}>
-          <label>Project Name (Overrides Campaign Name)</label>
-          <input type="text" value={projectName} onChange={e => setProjectName(e.target.value)} placeholder={`e.g., ${activeCategory} V2`} />
+      {/* LEFT COLUMN: Campaign Details, SEO, Tools */}
+      <div style={{
+        flex: '1 1 500px',
+        background: 'var(--surface-color)', 
+        border: '1px solid var(--border-color)',
+        padding: '1.5rem', 
+        borderRadius: 'var(--border-radius)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '1.25rem'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <span style={{ fontSize: '1.2rem' }}>📄</span>
+          <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: 'var(--accent-color)' }}>
+            Campaign Details ({activeCategory}) - {activeTabLabel}
+          </h3>
         </div>
-        <div className="form-group" style={{ flex: 1 }}>
-          <label>Client Name</label>
-          <input type="text" value={client} onChange={e => setClient(e.target.value)} placeholder="e.g., Timmerman Industries" />
-        </div>
-        <div className="form-group" style={{ flex: 1 }}>
-          <label>Campaign Year</label>
-          <input type="text" value={year} onChange={e => setYear(e.target.value)} placeholder="e.g., 2026" />
-        </div>
-      </div>
-
-      <div className="form-group" style={{ marginBottom: '1rem' }}>
-        <label>Campaign Description</label>
-        <textarea 
-          value={description} 
-          onChange={e => setDescription(e.target.value)} 
-          placeholder={`Describe what the ${activeCategory} campaign/topic is about...`} 
-          rows="3"
-          style={{
-            width: '100%', background: '#0b111a', border: '1px solid var(--border-color)',
-            color: '#fff', padding: '0.6rem', borderRadius: '6px', fontSize: '0.85rem',
-            fontFamily: 'inherit', resize: 'vertical'
-          }}
-        />
-      </div>
-
-      <div className="form-group" style={{ marginBottom: '1.25rem', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
-        <label style={{ display: 'block', marginBottom: '1rem', color: '#10b981', fontWeight: '600' }}>SEO Settings (Category Level)</label>
-        <div className="form-row" style={{ marginBottom: '0.75rem' }}>
-          <div className="form-group" style={{ flex: 1 }}>
-            <label>SEO Title (Browser Tab Title)</label>
-            <input type="text" value={seoTitle} onChange={e => setSeoTitle(e.target.value)} placeholder={`e.g., Best ${activeCategory} Services`} />
-          </div>
-          <div className="form-group" style={{ flex: 1 }}>
-            <label>SEO Keywords</label>
-            <input type="text" value={seoKeywords} onChange={e => setSeoKeywords(e.target.value)} placeholder="e.g., display ads, motion graphics, designer" />
-          </div>
-        </div>
-        <div className="form-group">
-          <label>SEO Description (Meta Description)</label>
-          <textarea 
-            value={seoDesc} 
-            onChange={e => setSeoDesc(e.target.value)} 
-            placeholder="Write a brief, catchy description for Google search results..." 
-            rows="2"
-            style={{ width: '100%', background: '#0b111a', border: '1px solid var(--border-color)', color: '#fff', padding: '0.6rem', borderRadius: '6px', fontSize: '0.85rem', fontFamily: 'inherit', resize: 'vertical' }}
-          />
-        </div>
-      </div>
-
-      <div className="form-group" style={{ marginBottom: '1.25rem', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
-        <label style={{ display: 'block', marginBottom: '1rem', color: 'var(--accent-color)', fontWeight: '600' }}>Contact & Social Links</label>
-        <div className="form-row" style={{ marginBottom: '0.75rem' }}>
-          <div className="form-group" style={{ flex: 1 }}>
-            <label>Gmail / Email</label>
-            <input type="email" value={socialLinks.email || ''} onChange={e => handleSocialChange('email', e.target.value)} placeholder="e.g., hello@example.com" />
-          </div>
-          <div className="form-group" style={{ flex: 1 }}>
-            <label>Phone Number</label>
-            <input type="text" value={socialLinks.phone || ''} onChange={e => handleSocialChange('phone', e.target.value)} placeholder="e.g., +1 234 567 890" />
-          </div>
-        </div>
-        <div className="form-row" style={{ marginBottom: '0.75rem' }}>
-          <div className="form-group" style={{ flex: 1 }}>
-            <label>Facebook Link</label>
-            <input type="url" value={socialLinks.facebook || ''} onChange={e => handleSocialChange('facebook', e.target.value)} placeholder="https://facebook.com/..." />
-          </div>
-          <div className="form-group" style={{ flex: 1 }}>
-            <label>LinkedIn Link</label>
-            <input type="url" value={socialLinks.linkedin || ''} onChange={e => handleSocialChange('linkedin', e.target.value)} placeholder="https://linkedin.com/in/..." />
-          </div>
-        </div>
+        
         <div className="form-row">
           <div className="form-group" style={{ flex: 1 }}>
-            <label>Dribbble Link</label>
-            <input type="url" value={socialLinks.dribbble || ''} onChange={e => handleSocialChange('dribbble', e.target.value)} placeholder="https://dribbble.com/..." />
+            <label>Project Name (Overrides Campaign Name)</label>
+            <input type="text" value={projectName} onChange={e => setProjectName(e.target.value)} placeholder={`e.g., ${activeCategory} V2`} />
           </div>
           <div className="form-group" style={{ flex: 1 }}>
-            <label>Behance Link</label>
-            <input type="url" value={socialLinks.behance || ''} onChange={e => handleSocialChange('behance', e.target.value)} placeholder="https://behance.net/..." />
+            <label>Client Name</label>
+            <input type="text" value={client} onChange={e => setClient(e.target.value)} placeholder="e.g., Timmerman Industries" />
           </div>
           <div className="form-group" style={{ flex: 1 }}>
-            <label>Website URL</label>
-            <input type="url" value={socialLinks.website || ''} onChange={e => handleSocialChange('website', e.target.value)} placeholder="https://..." />
+            <label>Campaign Year</label>
+            <input type="text" value={year} onChange={e => setYear(e.target.value)} placeholder="e.g., 2026" />
           </div>
         </div>
-      </div>
 
-      <div className="form-group" style={{ marginBottom: '1.25rem' }}>
-        <label style={{ display: 'block', marginBottom: '0.5rem' }}>Tools Used (Upload & Select)</label>
-        
-        {/* Upload box for new icons */}
-        <div 
-          onDragOver={e => e.preventDefault()}
-          onDrop={handleIconDrop}
-          style={{
-            border: '2px dashed var(--border-color)',
-            padding: '1rem',
-            borderRadius: '8px',
-            textAlign: 'center',
-            color: 'var(--text-secondary)',
-            marginBottom: '1rem',
-            cursor: 'pointer',
-            fontSize: '0.85rem'
-          }}
-          onClick={() => {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            input.onchange = (e) => {
-              const file = e.target.files[0];
-              if (file) {
-                const name = prompt("Enter a name for this tool (e.g., Illustrator):");
-                if (!name) return;
-                const reader = new FileReader();
-                reader.onload = (ev) => onAddIcon(ev.target.result, name);
-                reader.readAsDataURL(file);
-              }
-            };
-            input.click();
-          }}
-        >
-          📥 Drag & Drop or Click to upload custom PNG icon for tools
+        <div className="form-group">
+          <label>Campaign Description</label>
+          <textarea 
+            value={description} 
+            onChange={e => setDescription(e.target.value)} 
+            placeholder={`Describe what the ${activeCategory} campaign/topic is about...`} 
+            rows="3"
+            style={{
+              width: '100%', background: '#0b111a', border: '1px solid var(--border-color)',
+              color: '#fff', padding: '0.6rem', borderRadius: '6px', fontSize: '0.85rem',
+              fontFamily: 'inherit', resize: 'vertical'
+            }}
+          />
         </div>
-
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          {availableTools.map(tool => (
-            <label key={tool} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer', fontSize: '0.85rem' }}>
-              <input 
-                type="checkbox" 
-                checked={tools.includes(tool)} 
-                onChange={() => toggleTool(tool)}
-                style={{ cursor: 'pointer' }}
-              />
-              {tool.toUpperCase()}
-            </label>
-          ))}
-
-          {/* User uploaded icons */}
-          {iconLibrary.map(icon => (
-            <div key={icon.id} style={{ position: 'relative', display: 'inline-block' }}>
-              <div 
-                onClick={() => toggleTool(icon.id)}
-                style={{
-                  width: '40px', height: '40px',
-                  borderRadius: '8px',
-                  border: tools.includes(icon.id) ? '2px solid var(--accent-color)' : '2px solid transparent',
-                  cursor: 'pointer',
-                  backgroundImage: `url(${icon.url})`,
-                  backgroundSize: 'contain',
-                  backgroundPosition: 'center',
-                  backgroundRepeat: 'no-repeat',
-                  boxShadow: tools.includes(icon.id) ? '0 0 10px rgba(0, 122, 255, 0.4)' : 'none',
-                  backgroundColor: 'rgba(255,255,255,0.05)'
-                }}
-                title={icon.name || "Custom Tool"}
-              />
-              <button 
-                onClick={(e) => { e.stopPropagation(); onDeleteIcon && onDeleteIcon(icon.id); }}
-                style={{
-                  position: 'absolute', top: '-6px', right: '-6px',
-                  background: '#ef4444', color: '#fff', border: 'none',
-                  borderRadius: '50%', width: '18px', height: '18px',
-                  fontSize: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  cursor: 'pointer', padding: 0, boxShadow: '0 2px 4px rgba(0,0,0,0.5)'
-                }}
-                title="Delete custom icon"
-              >
-                ✕
-              </button>
+        <div className="form-group" style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+          <label style={{ display: 'block', marginBottom: '1rem', color: '#10b981', fontWeight: '600' }}>SEO Settings (Category Level)</label>
+          <div className="form-row" style={{ marginBottom: '0.75rem' }}>
+            <div className="form-group" style={{ flex: 1 }}>
+              <label>SEO Title</label>
+              <input type="text" value={seoTitle} onChange={e => setSeoTitle(e.target.value)} placeholder={`e.g., Best ${activeCategory} Services`} />
             </div>
-          ))}
+            <div className="form-group" style={{ flex: 1 }}>
+              <label>SEO Keywords</label>
+              <input type="text" value={seoKeywords} onChange={e => setSeoKeywords(e.target.value)} placeholder="e.g., display ads, motion graphics" />
+            </div>
+          </div>
+          <div className="form-group">
+            <label>SEO Description</label>
+            <textarea 
+              value={seoDesc} 
+              onChange={e => setSeoDesc(e.target.value)} 
+              placeholder="Write a brief, catchy description for Google search results..." 
+              rows="2"
+              style={{ width: '100%', background: '#0b111a', border: '1px solid var(--border-color)', color: '#fff', padding: '0.6rem', borderRadius: '6px', fontSize: '0.85rem', fontFamily: 'inherit', resize: 'vertical' }}
+            />
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600' }}>Tools Used (Upload & Select)</label>
+          {/* Upload box for new icons */}
+          <div 
+            onDragOver={e => e.preventDefault()}
+            onDrop={handleIconDrop}
+            style={{
+              border: '2px dashed var(--border-color)',
+              padding: '1rem',
+              borderRadius: '8px',
+              textAlign: 'center',
+              color: 'var(--text-secondary)',
+              marginBottom: '1rem',
+              cursor: 'pointer',
+              fontSize: '0.85rem'
+            }}
+            onClick={() => {
+              const input = document.createElement('input');
+              input.type = 'file';
+              input.accept = 'image/*';
+              input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  const name = prompt("Enter a name for this tool (e.g., Illustrator):");
+                  if (!name) return;
+                  const reader = new FileReader();
+                  reader.onload = (ev) => {
+                    onAddIcon({ id: Date.now().toString(), name, url: ev.target.result });
+                  };
+                  reader.readAsDataURL(file);
+                }
+              };
+              input.click();
+            }}
+          >
+            Drag & Drop icon here or Click to browse
+          </div>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+            {iconLibrary.map(icon => {
+              const isSelected = tools.includes(icon.id);
+              return (
+                <div key={icon.id} style={{ position: 'relative' }}>
+                  <div
+                    onClick={() => toggleTool(icon.id)}
+                    style={{
+                      padding: '0.5rem 0.75rem',
+                      background: isSelected ? 'var(--accent-color)' : 'var(--bg-card)',
+                      color: isSelected ? '#000' : 'var(--text-secondary)',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '0.85rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      border: isSelected ? '1px solid var(--accent-color)' : '1px solid var(--border-color)',
+                      fontWeight: isSelected ? '600' : 'normal',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    <img src={icon.url} alt={icon.name} style={{ width: '16px', height: '16px', objectFit: 'contain' }} />
+                    {icon.name}
+                  </div>
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); onDeleteIcon(icon.id); }}
+                    style={{
+                      position: 'absolute', top: '-6px', right: '-6px',
+                      background: '#ef4444', color: 'white', border: 'none', borderRadius: '50%',
+                      width: '18px', height: '18px', fontSize: '10px', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      <button className="btn-primary" onClick={handleSave} style={{ width: 'fit-content' }}>Save Campaign Info</button>
+      {/* RIGHT COLUMN: Contact & Social Links */}
+      <div style={{
+        flex: '1 1 350px',
+        background: 'var(--surface-color)', 
+        border: '1px solid var(--border-color)',
+        padding: '1.5rem', 
+        borderRadius: 'var(--border-radius)',
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
+          <span style={{ fontSize: '1.2rem' }}>🔗</span>
+          <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '600', color: 'var(--accent-color)' }}>
+            Contact & Social Links
+          </h3>
+        </div>
+        
+        <div className="form-group" style={{ marginBottom: '1rem' }}>
+          <label>Gmail / Email</label>
+          <input type="email" value={socialLinks.email || ''} onChange={e => handleSocialChange('email', e.target.value)} placeholder="e.g., hello@example.com" />
+        </div>
+        
+        <div className="form-group" style={{ marginBottom: '1rem' }}>
+          <label>Phone Number</label>
+          <input type="text" value={socialLinks.phone || ''} onChange={e => handleSocialChange('phone', e.target.value)} placeholder="e.g., +1 234 567 890" />
+        </div>
+        
+        <div className="form-group" style={{ marginBottom: '1rem' }}>
+          <label>Facebook Link</label>
+          <input type="url" value={socialLinks.facebook || ''} onChange={e => handleSocialChange('facebook', e.target.value)} placeholder="https://facebook.com/..." />
+        </div>
+        
+        <div className="form-group" style={{ marginBottom: '1rem' }}>
+          <label>LinkedIn Link</label>
+          <input type="url" value={socialLinks.linkedin || ''} onChange={e => handleSocialChange('linkedin', e.target.value)} placeholder="https://linkedin.com/in/..." />
+        </div>
+        
+        <div className="form-group" style={{ marginBottom: '1rem' }}>
+          <label>Dribbble Link</label>
+          <input type="url" value={socialLinks.dribbble || ''} onChange={e => handleSocialChange('dribbble', e.target.value)} placeholder="https://dribbble.com/..." />
+        </div>
+        
+        <div className="form-group" style={{ marginBottom: '1rem' }}>
+          <label>Behance Link</label>
+          <input type="url" value={socialLinks.behance || ''} onChange={e => handleSocialChange('behance', e.target.value)} placeholder="https://behance.net/..." />
+        </div>
+        
+        <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+          <label>Website URL</label>
+          <input type="url" value={socialLinks.website || ''} onChange={e => handleSocialChange('website', e.target.value)} placeholder="https://..." />
+        </div>
+
+        <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'flex-end' }}>
+          <button className="btn-primary" onClick={handleSave} style={{ width: '100%', justifyContent: 'center' }}>
+            Save Settings
+          </button>
+        </div>
+      </div>
+
     </div>
   );
 };
