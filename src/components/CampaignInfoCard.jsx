@@ -43,7 +43,7 @@ const CampaignInfoCard = ({ meta, topic, iconLibrary = [] }) => {
     gwd: (
       <span className="tool-tag" key="gwd" title="Google Web Designer">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="#1e293b" style={{ borderRadius: '3px' }}><rect width="24" height="24" fill="#1e293b"/><text x="12" y="15" fill="#10b981" fontSize="9" fontWeight="bold" fontFamily="sans-serif" textAnchor="middle">GWD</text></svg>
-        Web Designer
+        Google Web Designer
       </span>
     )
   };
