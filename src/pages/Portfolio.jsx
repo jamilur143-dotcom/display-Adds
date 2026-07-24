@@ -47,6 +47,10 @@ const resolveMedia = (item) => {
 const GDriveAsset = ({ media, title, style, ...rest }) => {
   const [useIframe, setUseIframe] = useState(false);
 
+  useEffect(() => {
+    setUseIframe(false);
+  }, [media.url]);
+
   if (useIframe) {
     return (
       <iframe 
