@@ -756,3 +756,34 @@ body::after {
   border-color: var(--text-secondary);
 }
 
+
+/* --- Analytics Overview Styles --- */
+.overview-btn {
+  background: rgba(16, 185, 129, 0.05);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+.overview-btn:hover {
+  background: rgba(16, 185, 129, 0.1);
+}
+.overview-btn.active {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: #10b981;
+  color: #fff;
+}
+.stat-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+.contact-section form input,
+.contact-section form textarea {
+  transition: border-color 0.2s ease;
+}
+.contact-section form input:focus,
+.contact-section form textarea:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}

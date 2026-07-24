@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { getStoredData, AD_SIZES } from '../data/mockData';
-import { syncPortfolioData } from '../firebase';
+import { syncPortfolioData, logVisit, saveLead } from '../firebase';
 import CampaignInfoCard from '../components/CampaignInfoCard';
 
 const resolveMedia = (item) => {
@@ -630,6 +630,24 @@ const Portfolio = () => {
   const [data, setData]               = useState(null);
   const [activeCategory, setCategory] = useState('All');
   const [zoomedItem, setZoomedItem] = useState(null);
+  
+  // Contact form state
+  const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
+  const [contactStatus, setContactStatus] = useState('');
+
+  const handleContactSubmit = async (e) => {
+    e.preventDefault();
+    if (!contactForm.name || !contactForm.email) return;
+    setContactStatus('sending');
+    const success = await saveLead(contactForm);
+    if (success) {
+      setContactStatus('sent');
+      setContactForm({ name: '', email: '', message: '' });
+      setTimeout(() => setContactStatus(''), 3000);
+    } else {
+      setContactStatus('error');
+    }
+  };
 
   useEffect(() => {
     const unsubscribe = syncPortfolioData((firestoreData) => {
@@ -639,6 +657,10 @@ const Portfolio = () => {
         setData(getStoredData());
       }
     });
+
+    // Log visitor analytics
+    logVisit();
+
     return () => unsubscribe();
   }, []);
 
@@ -715,6 +737,21 @@ const Portfolio = () => {
         <section className="portfolio-section" id="html5-ads">
           <SectionHeader number="03" title="HTML5 Interactive Ads" count={html5Items.length} activeCategory={resolvedCategory} />
           <BannersGrid items={html5Items} CardComponent={Html5AdCard} categoryMeta={getMeta(data.categoryMeta?.[resolvedCategory], 'html5Ads')} activeCategory={resolvedCategory} iconLibrary={data.iconLibrary} extraProps={{ onZoom: setZoomedItem }} />
+        </section>
+
+        {/* ─── Contact Form for Lead Capture ─── */}
+        <section className="portfolio-section contact-section" id="contact" style={{ marginTop: '4rem', padding: '3rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Get in Touch</h2>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>Interested in working together? Drop your email and we will get back to you.</p>
+          <form onSubmit={handleContactSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '500px' }}>
+            <input type="text" placeholder="Your Name" value={contactForm.name} onChange={e => setContactForm({...contactForm, name: e.target.value})} required style={{ padding: '0.8rem 1rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'rgba(0,0,0,0.2)', color: '#fff' }} />
+            <input type="email" placeholder="Your Email" value={contactForm.email} onChange={e => setContactForm({...contactForm, email: e.target.value})} required style={{ padding: '0.8rem 1rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'rgba(0,0,0,0.2)', color: '#fff' }} />
+            <textarea placeholder="Message (Optional)" value={contactForm.message} onChange={e => setContactForm({...contactForm, message: e.target.value})} rows="4" style={{ padding: '0.8rem 1rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'rgba(0,0,0,0.2)', color: '#fff', resize: 'vertical' }} />
+            <button type="submit" className="btn-primary" disabled={contactStatus === 'sending'} style={{ padding: '0.8rem', marginTop: '0.5rem', justifyContent: 'center' }}>
+              {contactStatus === 'sending' ? 'Sending...' : contactStatus === 'sent' ? 'Sent Successfully!' : 'Send Message'}
+            </button>
+            {contactStatus === 'error' && <span style={{ color: '#ef4444', fontSize: '0.85rem' }}>Error sending message. Try again.</span>}
+          </form>
         </section>
       </div>
     </div>

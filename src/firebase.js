@@ -82,3 +82,48 @@ export {
   orderBy,
   storage
 };
+
+// --- Analytics Functions ---
+export const logVisit = async () => {
+  try {
+    const visitsRef = collection(db, 'analytics_visits');
+    await addDoc(visitsRef, {
+      timestamp: Date.now(),
+      date: new Date().toISOString().split('T')[0],
+      userAgent: navigator.userAgent
+    });
+  } catch (err) {
+    console.error('Error logging visit', err);
+  }
+};
+
+export const saveLead = async (leadData) => {
+  try {
+    const leadsRef = collection(db, 'analytics_leads');
+    await addDoc(leadsRef, {
+      ...leadData,
+      timestamp: Date.now(),
+      date: new Date().toISOString().split('T')[0]
+    });
+    return true;
+  } catch (err) {
+    console.error('Error saving lead', err);
+    return false;
+  }
+};
+
+export const syncAnalyticsVisits = (onUpdate) => {
+  const q = query(collection(db, 'analytics_visits'), orderBy('timestamp', 'desc'));
+  return onSnapshot(q, (snapshot) => {
+    const visits = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    onUpdate(visits);
+  });
+};
+
+export const syncAnalyticsLeads = (onUpdate) => {
+  const q = query(collection(db, 'analytics_leads'), orderBy('timestamp', 'desc'));
+  return onSnapshot(q, (snapshot) => {
+    const leads = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    onUpdate(leads);
+  });
+};

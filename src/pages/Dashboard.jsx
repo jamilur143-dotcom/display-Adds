@@ -8,8 +8,9 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { getStoredData, CATEGORIES, AD_SIZES } from '../data/mockData';
-import { syncPortfolioData, savePortfolioData, uploadFileToStorage } from '../firebase';
+import { syncPortfolioData, savePortfolioData, uploadFileToStorage, syncAnalyticsVisits, syncAnalyticsLeads } from '../firebase';
 import CampaignInfoCard from '../components/CampaignInfoCard';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const resolveMedia = (item) => {
   if (!item || !item.url) return { type: 'unknown', url: '' };
@@ -661,10 +662,16 @@ const Dashboard = () => {
   const [data, setData] = useState(null);
   const [activeTab, setActiveTab] = useState('staticAssets');
   const [activeCategory, setCategory] = useState('All');
+  const [isOverview, setIsOverview] = useState(false); // New state for Overview
   const [isModalOpen, setModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  
+  const [analyticsVisits, setAnalyticsVisits] = useState([]);
+  const [analyticsLeads, setAnalyticsLeads] = useState([]);
 
   useEffect(() => {
+    const unsubVisits = syncAnalyticsVisits(setAnalyticsVisits);
+    const unsubLeads = syncAnalyticsLeads(setAnalyticsLeads);
     const unsubscribe = syncPortfolioData((firestoreData) => {
       if (firestoreData) {
         setData(firestoreData);
@@ -674,7 +681,7 @@ const Dashboard = () => {
         savePortfolioData(local);
       }
     });
-    return () => unsubscribe();
+    return () => { unsubscribe(); unsubVisits(); unsubLeads(); };
   }, []);
 
   const sensors = useSensors(
@@ -846,12 +853,21 @@ const Dashboard = () => {
     <div className="portfolio-layout">
       {/* Category Sidebar Workspace */}
       <aside className="sidebar">
+        <button
+          className={`filter-btn overview-btn ${isOverview ? 'active' : ''}`}
+          onClick={() => { setIsOverview(true); setCategory(''); }}
+          style={{ marginBottom: '1.5rem', fontWeight: 'bold', letterSpacing: '1px' }}
+        >
+          <span className="filter-dot" style={{ background: 'var(--accent-color)' }} />
+          OVERVIEW
+        </button>
+
         <div className="sidebar-title">Workspaces</div>
         {['All', ...allCategories.filter(c => c !== 'All')].map(cat => (
           <button
             key={cat}
-            className={`filter-btn ${activeCategory === cat ? 'active' : ''}`}
-            onClick={() => setCategory(cat)}
+            className={`filter-btn ${!isOverview && activeCategory === cat ? 'active' : ''}`}
+            onClick={() => { setCategory(cat); setIsOverview(false); }}
           >
             <span className="filter-dot" />
             {cat}
@@ -861,75 +877,155 @@ const Dashboard = () => {
 
       {/* Main Workspace Area */}
       <div className="portfolio-main" style={{ padding: '2rem 3rem' }}>
-        <div className="dashboard-header">
-          <h2 className="section-title-lg">Backend Dashboard</h2>
-          <button className="btn-primary" onClick={openUpload}>＋ Upload Asset</button>
-        </div>
-        <p className="subtitle">
-          Manage your campaign workspaces. Select a category from the sidebar to view its clean workspace and edit campaign details.
-        </p>
-
-        <div className="dash-tabs" style={{ marginBottom: '1.5rem' }}>
-          {Object.entries(TAB_LABELS).map(([key, label]) => (
-            <button 
-              key={key} 
-              className={`dash-tab ${activeTab === key ? 'active' : ''}`}
-              onClick={() => setActiveTab(key)}
-            >
-              {label} <span className="tab-count">({data[key].filter(i => activeCategory === 'All' || i.category === activeCategory).length})</span>
-            </button>
-          ))}
-        </div>
-
-        <CategoryMetaEditor 
-          activeCategory={activeCategory} 
-          activeTabLabel={TAB_LABELS[activeTab]}
-          categoryMeta={
-            data.categoryMeta?.[activeCategory]
-              ? (data.categoryMeta[activeCategory].staticAssets || data.categoryMeta[activeCategory].motionGraphics || data.categoryMeta[activeCategory].html5Ads
-                  ? data.categoryMeta[activeCategory]?.[activeTab] || {}
-                  : data.categoryMeta[activeCategory])
-              : {}
-          }
-          iconLibrary={data.iconLibrary || []}
-          onSave={handleSaveMeta} 
-          onAddIcon={handleAddIcon}
-          onDeleteIcon={handleDeleteIcon}
-        />
-
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={filteredItems.map(i => i.id)} strategy={rectSortingStrategy}>
-            <div className="dnd-grid">
-              {filteredItems.map(item => (
-                <SortableItem
-                  key={item.id}
-                  id={item.id}
-                  item={item}
-                  allCategories={allCategories}
-                  onCategoryChange={handleCategoryChange}
-                  onEdit={openEdit}
-                  onDelete={handleDelete}
-                />
-              ))}
-              <CampaignInfoCard 
-                meta={
-                  data.categoryMeta?.[activeCategory]
-                    ? (data.categoryMeta[activeCategory].staticAssets || data.categoryMeta[activeCategory].motionGraphics || data.categoryMeta[activeCategory].html5Ads
-                        ? data.categoryMeta[activeCategory]?.[activeTab] || null
-                        : data.categoryMeta[activeCategory])
-                    : (activeCategory === 'All' ? {
-                        description: "An overview of all my display ad campaigns, showcasing static designs, animated GIFs, and interactive HTML5 ads.",
-                        client: "Various Clients",
-                        year: "2026",
-                        tools: []
-                      } : null)
-                } 
-                topic={activeCategory} 
-                iconLibrary={data.iconLibrary} 
-              />
+        
+        {isOverview ? (
+          <div className="analytics-overview">
+            <div className="dashboard-header">
+              <h2 className="section-title-lg">Analytics Overview</h2>
             </div>
-          </SortableContext>
-        </DndContext>
+            <p className="subtitle" style={{ marginBottom: '2rem' }}>
+              Track your portfolio website visits and lead captures in real-time.
+            </p>
+            
+            <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
+              <div className="stat-card" style={{ background: 'var(--bg-card)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                <h4 style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Total Visits</h4>
+                <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--accent-color)' }}>{analyticsVisits.length}</div>
+              </div>
+              <div className="stat-card" style={{ background: 'var(--bg-card)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                <h4 style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Unique Days</h4>
+                <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#10b981' }}>{new Set(analyticsVisits.map(v => v.date)).size}</div>
+              </div>
+              <div className="stat-card" style={{ background: 'var(--bg-card)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                <h4 style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Leads Collected</h4>
+                <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#8b5cf6' }}>{analyticsLeads.length}</div>
+              </div>
+            </div>
+
+            <div className="chart-section" style={{ background: 'var(--bg-card)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--border-color)', marginBottom: '3rem' }}>
+              <h3 style={{ marginBottom: '1.5rem' }}>Traffic Overview</h3>
+              <div style={{ width: '100%', height: '300px' }}>
+                <ResponsiveContainer>
+                  <LineChart data={
+                    Object.entries(analyticsVisits.reduce((acc, v) => {
+                      acc[v.date] = (acc[v.date] || 0) + 1; return acc;
+                    }, {})).map(([date, count]) => ({ date, views: count })).sort((a,b) => a.date.localeCompare(b.date))
+                  }>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+                    <XAxis dataKey="date" stroke="#888" tick={{fill: '#888'}} />
+                    <YAxis stroke="#888" tick={{fill: '#888'}} allowDecimals={false} />
+                    <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px', color: '#fff' }} />
+                    <Line type="monotone" dataKey="views" stroke="var(--accent-color)" strokeWidth={3} dot={{ r: 4, fill: 'var(--accent-color)' }} activeDot={{ r: 6 }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className="leads-section" style={{ background: 'var(--bg-card)', padding: '1.5rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+              <h3 style={{ marginBottom: '1.5rem' }}>Recent Leads & Contacts</h3>
+              {analyticsLeads.length === 0 ? (
+                <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)', background: 'rgba(255,255,255,0.02)', borderRadius: '6px' }}>
+                  No leads collected yet. Share your portfolio to get more visitors!
+                </div>
+              ) : (
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
+                        <th style={{ padding: '1rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Date</th>
+                        <th style={{ padding: '1rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Name</th>
+                        <th style={{ padding: '1rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Email</th>
+                        <th style={{ padding: '1rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Message</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {analyticsLeads.map(lead => (
+                        <tr key={lead.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                          <td style={{ padding: '1rem' }}>{new Date(lead.timestamp).toLocaleDateString()} {new Date(lead.timestamp).toLocaleTimeString()}</td>
+                          <td style={{ padding: '1rem', fontWeight: 500 }}>{lead.name}</td>
+                          <td style={{ padding: '1rem', color: '#60a5fa' }}><a href={`mailto:${lead.email}`} style={{ color: 'inherit', textDecoration: 'none' }}>{lead.email}</a></td>
+                          <td style={{ padding: '1rem', color: 'var(--text-secondary)' }}>{lead.message || '-'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="dashboard-header">
+              <h2 className="section-title-lg">Backend Dashboard</h2>
+              <button className="btn-primary" onClick={openUpload}>＋ Upload Asset</button>
+            </div>
+            <p className="subtitle">
+              Manage your campaign workspaces. Select a category from the sidebar to view its clean workspace and edit campaign details.
+            </p>
+
+            <div className="dash-tabs" style={{ marginBottom: '1.5rem' }}>
+              {Object.entries(TAB_LABELS).map(([key, label]) => (
+                <button 
+                  key={key} 
+                  className={`dash-tab ${activeTab === key ? 'active' : ''}`}
+                  onClick={() => setActiveTab(key)}
+                >
+                  {label} <span className="tab-count">({data[key].filter(i => activeCategory === 'All' || i.category === activeCategory).length})</span>
+                </button>
+              ))}
+            </div>
+
+            <CategoryMetaEditor 
+              activeCategory={activeCategory} 
+              activeTabLabel={TAB_LABELS[activeTab]}
+              categoryMeta={
+                data.categoryMeta?.[activeCategory]
+                  ? (data.categoryMeta[activeCategory].staticAssets || data.categoryMeta[activeCategory].motionGraphics || data.categoryMeta[activeCategory].html5Ads
+                      ? data.categoryMeta[activeCategory]?.[activeTab] || {}
+                      : data.categoryMeta[activeCategory])
+                  : {}
+              }
+              iconLibrary={data.iconLibrary || []}
+              onSave={handleSaveMeta} 
+              onAddIcon={handleAddIcon}
+              onDeleteIcon={handleDeleteIcon}
+            />
+
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <SortableContext items={filteredItems.map(i => i.id)} strategy={rectSortingStrategy}>
+                <div className="dnd-grid">
+                  {filteredItems.map(item => (
+                    <SortableItem
+                      key={item.id}
+                      id={item.id}
+                      item={item}
+                      allCategories={allCategories}
+                      onCategoryChange={handleCategoryChange}
+                      onEdit={openEdit}
+                      onDelete={handleDelete}
+                    />
+                  ))}
+                  <CampaignInfoCard 
+                    meta={
+                      data.categoryMeta?.[activeCategory]
+                        ? (data.categoryMeta[activeCategory].staticAssets || data.categoryMeta[activeCategory].motionGraphics || data.categoryMeta[activeCategory].html5Ads
+                            ? data.categoryMeta[activeCategory]?.[activeTab] || null
+                            : data.categoryMeta[activeCategory])
+                        : (activeCategory === 'All' ? {
+                            description: "An overview of all my display ad campaigns, showcasing static designs, animated GIFs, and interactive HTML5 ads.",
+                            client: "Various Clients",
+                            year: "2026",
+                            tools: []
+                          } : null)
+                    } 
+                    topic={activeCategory} 
+                    iconLibrary={data.iconLibrary} 
+                  />
+                </div>
+              </SortableContext>
+            </DndContext>
+          </>
+        )}
       </div>
 
       <UploadModal 
