@@ -63,6 +63,11 @@ const CategoryMetaEditor = ({ activeCategory, activeTabLabel, categoryMeta = {},
   const [socialLinks, setSocialLinks] = useState(categoryMeta.socialLinks || {
     email: '', phone: '', facebook: '', linkedin: '', website: '', dribbble: '', behance: ''
   });
+  
+  // SEO Fields
+  const [seoTitle, setSeoTitle] = useState(categoryMeta.seoTitle || '');
+  const [seoKeywords, setSeoKeywords] = useState(categoryMeta.seoKeywords || '');
+  const [seoDesc, setSeoDesc] = useState(categoryMeta.seoDesc || '');
 
   useEffect(() => {
     setDescription(categoryMeta.description || '');
@@ -71,6 +76,9 @@ const CategoryMetaEditor = ({ activeCategory, activeTabLabel, categoryMeta = {},
     setTools(categoryMeta.tools || []);
     setProjectName(categoryMeta.projectName || '');
     setSocialLinks(categoryMeta.socialLinks || { email: '', phone: '', facebook: '', linkedin: '', website: '', dribbble: '', behance: '' });
+    setSeoTitle(categoryMeta.seoTitle || '');
+    setSeoKeywords(categoryMeta.seoKeywords || '');
+    setSeoDesc(categoryMeta.seoDesc || '');
   }, [categoryMeta]);
 
   const toggleTool = (tool) => {
@@ -94,7 +102,17 @@ const CategoryMetaEditor = ({ activeCategory, activeTabLabel, categoryMeta = {},
   };
 
   const handleSave = () => {
-    onSave(activeCategory, { description, client, year, tools, projectName, socialLinks });
+    onSave(activeCategory, { 
+      description, 
+      client, 
+      year, 
+      tools, 
+      projectName, 
+      socialLinks,
+      seoTitle,
+      seoKeywords,
+      seoDesc
+    });
     alert(`Campaign details saved for topic "${activeCategory}"!`);
   };
 
@@ -140,6 +158,30 @@ const CategoryMetaEditor = ({ activeCategory, activeTabLabel, categoryMeta = {},
             fontFamily: 'inherit', resize: 'vertical'
           }}
         />
+      </div>
+
+      <div className="form-group" style={{ marginBottom: '1.25rem', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+        <label style={{ display: 'block', marginBottom: '1rem', color: '#10b981', fontWeight: '600' }}>SEO Settings (Category Level)</label>
+        <div className="form-row" style={{ marginBottom: '0.75rem' }}>
+          <div className="form-group" style={{ flex: 1 }}>
+            <label>SEO Title (Browser Tab Title)</label>
+            <input type="text" value={seoTitle} onChange={e => setSeoTitle(e.target.value)} placeholder={`e.g., Best ${activeCategory} Services`} />
+          </div>
+          <div className="form-group" style={{ flex: 1 }}>
+            <label>SEO Keywords</label>
+            <input type="text" value={seoKeywords} onChange={e => setSeoKeywords(e.target.value)} placeholder="e.g., display ads, motion graphics, designer" />
+          </div>
+        </div>
+        <div className="form-group">
+          <label>SEO Description (Meta Description)</label>
+          <textarea 
+            value={seoDesc} 
+            onChange={e => setSeoDesc(e.target.value)} 
+            placeholder="Write a brief, catchy description for Google search results..." 
+            rows="2"
+            style={{ width: '100%', background: '#0b111a', border: '1px solid var(--border-color)', color: '#fff', padding: '0.6rem', borderRadius: '6px', fontSize: '0.85rem', fontFamily: 'inherit', resize: 'vertical' }}
+          />
+        </div>
       </div>
 
       <div className="form-group" style={{ marginBottom: '1.25rem', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>

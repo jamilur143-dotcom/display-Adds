@@ -743,6 +743,35 @@ const Portfolio = () => {
     ? (customCats.length === 1 ? customCats[0] : 'All')
     : activeCategory;
 
+  // Sync SEO Meta Tags dynamically
+  useEffect(() => {
+    if (!data || !data.categoryMeta) return;
+
+    const currentMeta = data.categoryMeta[resolvedCategory] || {};
+    const title = currentMeta.seoTitle || `${resolvedCategory === 'All' ? 'Display Ads Portfolio' : resolvedCategory} - Creative Agency`;
+    const description = currentMeta.seoDesc || `View the digital marketing portfolio for ${resolvedCategory}.`;
+    const keywords = currentMeta.seoKeywords || `${resolvedCategory}, display ads, creative agency, motion graphics, html5`;
+
+    document.title = title;
+
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (!metaDesc) {
+      metaDesc = document.createElement('meta');
+      metaDesc.name = "description";
+      document.head.appendChild(metaDesc);
+    }
+    metaDesc.setAttribute('content', description);
+
+    let metaKeywords = document.querySelector('meta[name="keywords"]');
+    if (!metaKeywords) {
+      metaKeywords = document.createElement('meta');
+      metaKeywords.name = "keywords";
+      document.head.appendChild(metaKeywords);
+    }
+    metaKeywords.setAttribute('content', keywords);
+
+  }, [resolvedCategory, data]);
+
   const getMeta = (catData, tab) => {
     if (!catData) return null;
     return (catData.staticAssets || catData.motionGraphics || catData.html5Ads)
